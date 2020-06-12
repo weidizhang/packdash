@@ -1,6 +1,8 @@
 import requests
 import xml.etree.ElementTree as ET
 
+import status
+
 class USPS:
     def __init__(self, user_id):
         self.uid = user_id
@@ -21,6 +23,7 @@ class USPS:
             detail_texts.append(detail.text)
 
         return {
+            "status": self._parse_status(track_summary),
             "last_update": track_summary,
             "previous_details": detail_texts
         }
@@ -37,6 +40,16 @@ class USPS:
         return res.content
 
     def _parse_status(self, summary):
-        if "item was delivered" in summary:
-            return "Delivered"
-        # TODO:
+        summary = summary.lower()
+        mapping = {
+            "item was delivered": status.STATUS_DELIVERED,
+            "accept": status.STATUS_ACCEPTED,
+            "pre-shipment": status.STATUS_PRE_SHIPMENT
+        }
+        for key, status_val in mapping.items():
+            if key in summary:
+                return status_val
+
+        # Assumption: any other text means that it is in transit
+        # TODO: figure out possible error messages
+        return status.STATUS_IN_TRANSIT
