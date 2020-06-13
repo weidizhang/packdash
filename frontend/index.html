@@ -9,12 +9,22 @@
 
     <title>packdash - Your Package Dashboard</title>
 
+    <!-- Font Awesome and Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css"
         integrity="sha256-46r060N2LrChLLb5zowXQ72/iKKNiw/lAmygmHExk/o=" crossorigin="anonymous" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css"
         integrity="sha256-aAr2Zpq8MZ+YA/D6JtRD3xtrwpEz2IqOS+pWD/7XKIw=" crossorigin="anonymous" />
+
+    <!-- Bootstrap JS (with jQuery) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
+        integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/js/bootstrap.min.js"
+        integrity="sha256-OFRAJNoaD8L3Br5lglV7VyLRf0itmoBzWUoM+Sji4/8=" crossorigin="anonymous"></script>
+
+    <!-- Additional Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=MuseoModerno:wght@300&display=swap" rel="stylesheet">
 
+    <!-- Custom CSS -->
     <link href="css/main.css" rel="stylesheet">
 </head>
 
@@ -30,7 +40,7 @@
             <div class="col-md-8 mx-auto">
                 <div class="input-group">
                     <input type="text" class="form-control"
-                        placeholder="Enter a tracking number from Fedex, USPS, or UPS">
+                        placeholder="Enter a tracking number from FedEx, USPS, or UPS">
 
                     <div class="input-group-append">
                         <button type="submit" class="btn btn-secondary">
@@ -38,7 +48,7 @@
                         </button>
                     </div>
 
-                    <span class="badge badge-pill badge-info" id="carrier-badge">USPS</span>
+                    <span class="badge badge-pill badge-info" id="search-carrier-badge">USPS</span>
                 </div>
             </div>
         </div>
@@ -50,12 +60,35 @@
             <div class="col-md-8 mx-auto">
                 <div class="card">
                     <div class="card-header">
-                        Featured
+                        Package Details
                     </div>
+
                     <div class="card-body">
-                        <h5 class="card-title">Special title treatment</h5>
-                        <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                        <a href="#" class="btn btn-primary">Go somewhere</a>
+                        <h5 class="card-title">In Transit</h5>
+                        <span id="pkg-detail-track">
+                            Tracking Number:
+                            <a href="#" target="_blank" title="View on CARRIER NAME">
+                                <span id="pkg-detail-num">11020239320299</span>
+                            </a>
+                        </span>
+                        <span class="badge badge-pill badge-info float-right">FedEx</span>
+
+                        <hr>
+
+                        <span id="pkg-detail-text">
+                            With supporting text below as a natural lead-in to additional content.
+                        </span>
+
+                        <button class="btn btn-sm btn-primary float-right" id="expand-fix" type="button"
+                            data-toggle="collapse" data-target="#pkg-detail-collapse" aria-expanded="false"
+                            aria-controls="pkg-detail-collapse">
+                            <i class="fa fa-chevron-down" aria-hidden="true"></i>
+                        </button>
+
+                        <div class="collapse" id="pkg-detail-collapse">
+                            <hr>
+                            Additional Details
+                        </div>
                     </div>
                 </div>
             </div>
