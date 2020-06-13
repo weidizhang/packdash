@@ -4,6 +4,14 @@ body
     margin-top: 15%;
 }
 
+#carrier-badge
+{
+    position: absolute;
+    right: 50px;
+    top: calc((100% - 18px) / 2); /* Badge height = 18px */
+    z-index: 999; /* For input hover */
+}
+
 #logo-text
 {
     color: white;
