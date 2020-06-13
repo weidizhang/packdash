@@ -2,10 +2,11 @@ import requests
 import xml.etree.ElementTree as ET
 
 class Status:
-    STATUS_PRE_SHIPMENT = "Pre-Shipment"
     STATUS_ACCEPTED = "Accepted"
-    STATUS_IN_TRANSIT = "In Transit"
     STATUS_DELIVERED = "Delivered"
+    STATUS_IN_TRANSIT = "In Transit"
+    STATUS_OUT_FOR_DELIVERY = "Out for Delivery"
+    STATUS_PRE_SHIPMENT = "Pre-Shipment"
 
 class USPS:
     def __init__(self, user_id):
@@ -47,6 +48,7 @@ class USPS:
         summary = summary.lower()
         mapping = {
             "item was delivered": Status.STATUS_DELIVERED,
+            "out for delivery": Status.OUT_FOR_DELIVERY,
             "accept": Status.STATUS_ACCEPTED,
             "pre-shipment": Status.STATUS_PRE_SHIPMENT
         }
