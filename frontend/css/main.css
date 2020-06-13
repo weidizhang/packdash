@@ -12,6 +12,11 @@ body
     z-index: 999; /* For input hover */
 }
 
+.gap-space
+{
+    margin-top: 20px;
+}
+
 #logo-text
 {
     color: white;
