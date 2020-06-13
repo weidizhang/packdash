@@ -1,4 +1,0 @@
-STATUS_PRE_SHIPMENT = "Pre-Shipment"
-STATUS_ACCEPTED = "Accepted"
-STATUS_IN_TRANSIT = "In Transit"
-STATUS_DELIVERED = "Delivered"
