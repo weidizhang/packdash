@@ -1,0 +1,12 @@
+body
+{
+    background-color: #a598ee;
+    margin-top: 15%;
+}
+
+#logo-text
+{
+    color: white;
+    font-family: "MuseoModerno", cursive;
+    text-shadow: 2px 2px rgba(0, 0, 0, 0.7);
+}
