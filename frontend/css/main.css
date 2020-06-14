@@ -4,6 +4,11 @@ body
     margin-top: 15%;
 }
 
+.card-header
+{
+    font-weight: bold;
+}
+
 .card-title
 {
     margin: 0px !important;

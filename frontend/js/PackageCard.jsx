@@ -20,12 +20,21 @@ class PackageCard extends React.Component {
 
     onSearchBarInput(carrier, tracking)
     {
-        const pkgAPI = new PackageAPI();
-        pkgAPI.getTrackingData(carrier, tracking, (json) => {
-            this.setState(json);
-            this.setState({
-                carrier: carrier,
-                tracking: tracking
+        this.setState({ isLoading: true }, () => {
+            const pkgAPI = new PackageAPI();
+            pkgAPI.getTrackingData(carrier, tracking, (data) => {
+                if ("error" in data)
+                {
+                    // TODO:
+                }
+
+                this.setState(data);
+                this.setState({
+                    carrier: carrier,
+                    tracking: tracking,
+                    
+                    isLoading: false
+                });
             });
         });
     }
@@ -42,8 +51,17 @@ class PackageCard extends React.Component {
 
     renderLoadingCard()
     {
-        // TODO:
-        return ( null );
+        return (
+            <div className="card">
+                <div className="card-header">Package Details</div>
+
+                <div className="card-body text-center">
+                    <div className="spinner-border text-primary" role="status">
+                        <span className="sr-only">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     renderMainCard()
