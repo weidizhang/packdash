@@ -43,7 +43,7 @@ class SearchBar extends React.Component {
 
     handleClick()
     {
-        this.pkgCard.onSearchBarInput(this.state.tracking);
+        this.pkgCard.onSearchBarInput(this.state.carrier, this.state.tracking);
 
         // Reset the state to default state
         this.setState({
@@ -54,7 +54,7 @@ class SearchBar extends React.Component {
 
     handleKeyDown(e)
     {
-        if (e.key === "Enter")
+        if (e.key === "Enter" && this.state.carrier !== null)
             this.handleClick();
     }
 
