@@ -17,6 +17,7 @@ class PackageCard extends React.Component {
             isExpanded: false,
             isLoading: false
         };
+        this.mainCardRef = React.createRef();
     }
 
     handleCollapseClick()
@@ -79,7 +80,7 @@ class PackageCard extends React.Component {
     renderMainCard()
     {
         return (
-            <div className="card">
+            <div className="card" ref={ this.mainCardRef }>
                 <div className="card-header">Package Details</div>
 
                 <div className="card-body">
@@ -132,6 +133,20 @@ class PackageCard extends React.Component {
                     </span>
                 </div>
             );
+    }
+
+    scrollToDetails()
+    {
+        if (this.state.isExpanded && this.mainCardRef && this.mainCardRef.current)
+        {
+            const mainCardRect = this.mainCardRef.current.getBoundingClientRect();
+            const mainCardTop = mainCardRect.top + window.pageYOffset;
+
+            window.scrollTo({
+                behavior: "smooth",
+                top: mainCardTop
+            });
+        }
     }
 }
 
