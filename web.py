@@ -44,7 +44,7 @@ class WebInterface(SimpleHTTPRequestHandler):
                     if track_response:
                         self.send_json_response(track_response)
                     else:
-                        self.send_json_response({ "error": "bad tracking number "})
+                        self.send_json_response({ "error": "bad tracking number"})
                 else:
                     self.send_json_response({ "error": "bad data" })
 

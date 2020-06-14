@@ -18,14 +18,16 @@ class USPS:
             return False
 
         data_xml = ET.fromstring(data)
-        track_summary = data_xml.find(".//TrackSummary").text
-        if "could not locate" in track_summary:
+        track_summary = data_xml.find(".//TrackSummary")
+        if track_summary is None or "could not locate" in track_summary.text:
             return False
 
+        track_summary = track_summary.text
         track_details = data_xml.findall(".//TrackDetail")
         detail_texts = []
-        for detail in track_details:
-            detail_texts.append(detail.text)
+        if track_details is not None:
+            for detail in track_details:
+                detail_texts.append(detail.text)
 
         return {
             "status": self._parse_status(track_summary),
