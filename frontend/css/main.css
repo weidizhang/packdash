@@ -15,6 +15,13 @@ body
     margin: 0px !important;
 }
 
+.collapsing
+{
+    /* Override bootstrap's slower durations */
+    -webkit-transition-duration: 0.2s !important;
+    transition-duration: 0.2s !important;
+}
+
 #expand-fix
 {
     margin-top: -3px;
@@ -40,6 +47,12 @@ body
 .pkg-detail-text
 {
     font-size: 14px;
+}
+
+#pkg-error
+{
+    font-size: 54px;
+    margin-bottom: 5px;
 }
 
 #search-carrier-badge

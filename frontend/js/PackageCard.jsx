@@ -14,6 +14,7 @@ class PackageCard extends React.Component {
             previousDetails: null,
 
             // For component render state information
+            isError: false,
             isExpanded: false,
             isLoading: false
         };
@@ -37,7 +38,12 @@ class PackageCard extends React.Component {
             pkgAPI.getTrackingData(carrier, tracking, (data) => {
                 if ("error" in data)
                 {
-                    // TODO:
+                    // No other states have to be set because of the render order checks
+                    this.setState({
+                        isError: true,
+                        isLoading: false
+                    });
+                    return;
                 }
 
                 this.setState(data);
@@ -45,6 +51,7 @@ class PackageCard extends React.Component {
                     carrier: carrier,
                     tracking: tracking,
                     
+                    isError: false,
                     isExpanded: false,
                     isLoading: false
                 });
@@ -56,10 +63,32 @@ class PackageCard extends React.Component {
     {
         if (this.state.isLoading)
             return this.renderLoadingCard();
+        if (this.state.isError)
+            return this.renderErrorCard();
         if (!this.state.status)
             return null;
 
         return this.renderMainCard();
+    }
+
+    renderErrorCard()
+    {
+        return (
+            <div className="card">
+                <div className="card-header">Package Details</div>
+
+                <div className="card-body text-center">
+                    <div className="text-danger">
+                        <i className="fa fa-exclamation-triangle" id="pkg-error" aria-hidden="true" />
+                        <h5>Oops!</h5>
+                    </div>
+
+                    <span className="pkg-detail-text">
+                        Please double check your tracking number and try again.
+                    </span>
+                </div>
+            </div>
+        );
     }
 
     renderLoadingCard()
@@ -141,10 +170,11 @@ class PackageCard extends React.Component {
         {
             const mainCardRect = this.mainCardRef.current.getBoundingClientRect();
             const mainCardTop = mainCardRect.top + window.pageYOffset;
+            const offset = 15;
 
             window.scrollTo({
                 behavior: "smooth",
-                top: mainCardTop
+                top: mainCardTop - offset
             });
         }
     }
