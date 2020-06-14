@@ -2,9 +2,11 @@ class SearchBar extends React.Component {
     constructor(props)
     {
         super(props);
+
+        this.pkgCard = window.pkgCard.current;
         this.state = {
             carrier: null,
-            tracking: null
+            tracking: ""
         };
     }
 
@@ -41,7 +43,19 @@ class SearchBar extends React.Component {
 
     handleClick()
     {
-        
+        this.pkgCard.onSearchBarInput(this.state.tracking);
+
+        // Reset the state to default state
+        this.setState({
+            carrier: null,
+            tracking: ""
+        });
+    }
+
+    handleKeyDown(e)
+    {
+        if (e.key === "Enter")
+            this.handleClick();
     }
 
     handleInputChange(e)
@@ -61,7 +75,9 @@ class SearchBar extends React.Component {
                     type="text"
                     className="form-control"
                     placeholder="Enter a tracking number from FedEx, USPS, or UPS"
-                    onChange={ this.handleInputChange.bind(this) } />
+                    value={ this.state.tracking }
+                    onChange={ this.handleInputChange.bind(this) } 
+                    onKeyDown={ this.handleKeyDown.bind(this) } />
 
                     <div className="input-group-append">
                         <button

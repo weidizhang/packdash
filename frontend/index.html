@@ -46,39 +46,8 @@
         <!-- Info Panel -->
         <div class="row">
             <div class="col-md-8 mx-auto">
-                <div class="card">
-                    <div class="card-header">
-                        Package Details
-                    </div>
-
-                    <div class="card-body">
-                        <h5 class="card-title">In Transit</h5>
-                        <span id="pkg-detail-track">
-                            Tracking Number:
-                            <a href="#" target="_blank" title="View on CARRIER NAME">
-                                <span id="pkg-detail-num">11020239320299</span>
-                            </a>
-                        </span>
-                        <span class="badge badge-pill badge-info float-right">FedEx</span>
-
-                        <hr>
-
-                        <span id="pkg-detail-text">
-                            With supporting text below as a natural lead-in to additional content.
-                        </span>
-
-                        <button class="btn btn-sm btn-primary float-right" id="expand-fix" type="button"
-                            data-toggle="collapse" data-target="#pkg-detail-collapse" aria-expanded="false"
-                            aria-controls="pkg-detail-collapse">
-                            <i class="fa fa-chevron-down" aria-hidden="true"></i>
-                        </button>
-
-                        <div class="collapse" id="pkg-detail-collapse">
-                            <hr>
-                            Additional Details
-                        </div>
-                    </div>
-                </div>
+                <!-- React Container -->
+                <div id="pkg-detail-container"></div>
             </div>
         </div>
     </div>
@@ -104,6 +73,8 @@
         integrity="sha256-9xBa2Hcuh2S3iew36CzJawq7T9iviOAcAVz3bw8h3Lo=" crossorigin="anonymous"></script>
 
     <!-- Custom JSX / React Components -->
+    <!-- Must be loaded in the below order -->
+    <script type="text/jsx" src="js/PackageCard.jsx"></script>
     <script type="text/jsx" src="js/SearchBar.jsx"></script>
 </body>
 
