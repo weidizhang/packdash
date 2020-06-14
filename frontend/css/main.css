@@ -2,6 +2,7 @@ body
 {
     background-color: #a598ee;
     margin-top: 15%;
+    margin-bottom: 30px;
 }
 
 .card-header
@@ -36,7 +37,7 @@ body
     font-size: 75%; /* Same as badge */
 }
 
-#pkg-detail-text
+.pkg-detail-text
 {
     font-size: 14px;
 }

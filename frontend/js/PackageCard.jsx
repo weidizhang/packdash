@@ -14,8 +14,19 @@ class PackageCard extends React.Component {
             previousDetails: null,
 
             // For component render state information
+            isExpanded: false,
             isLoading: false
         };
+    }
+
+    handleCollapseClick()
+    {
+        this.setState({ isExpanded: !this.state.isExpanded });
+    }
+
+    hasPreviousDetails()
+    {
+        return this.state.previousDetails && this.state.previousDetails.length > 0;
     }
 
     onSearchBarInput(carrier, tracking)
@@ -33,6 +44,7 @@ class PackageCard extends React.Component {
                     carrier: carrier,
                     tracking: tracking,
                     
+                    isExpanded: false,
                     isLoading: false
                 });
             });
@@ -44,7 +56,7 @@ class PackageCard extends React.Component {
         if (this.state.isLoading)
             return this.renderLoadingCard();
         if (!this.state.status)
-            return ( null );
+            return null;
 
         return this.renderMainCard();
     }
@@ -82,23 +94,44 @@ class PackageCard extends React.Component {
 
                     <hr />
 
-                    <span id="pkg-detail-text">
+                    <span className="pkg-detail-text">
                         { this.state.lastUpdate }
                     </span>
 
-                    <button className="btn btn-sm btn-primary float-right" id="expand-fix" type="button"
+                    <button
+                        className="btn btn-sm btn-primary float-right" id="expand-fix" type="button"
                         data-toggle="collapse" data-target="#pkg-detail-collapse" aria-expanded="false"
-                        aria-controls="pkg-detail-collapse">
-                        <i className="fa fa-chevron-down" aria-hidden="true"></i>
+                        aria-controls="pkg-detail-collapse"
+
+                        onClick={ this.handleCollapseClick.bind(this) }
+                        disabled={ !this.hasPreviousDetails() }>
+                        <i
+                            className={ "fa fa-chevron-" + (this.state.isExpanded ? "up" : "down") }
+                            aria-hidden="true" />
                     </button>
 
                     <div className="collapse" id="pkg-detail-collapse">
-                        <hr />
-                        Additional Details
+                        { [ ...this.renderMainCardDetails() ] }
                     </div>
                 </div>
             </div>
         );
+    }
+
+    *renderMainCardDetails()
+    {
+        if (!this.hasPreviousDetails())
+            return null;
+
+        for (const detail of this.state.previousDetails)
+            yield (
+                <div key={ detail }>
+                    <hr />
+                    <span className="pkg-detail-text">
+                        { detail }
+                    </span>
+                </div>
+            );
     }
 }
 
