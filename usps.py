@@ -29,8 +29,8 @@ class USPS:
 
         return {
             "status": self._parse_status(track_summary),
-            "last_update": track_summary,
-            "previous_details": detail_texts
+            "lastUpdate": track_summary,
+            "previousDetails": detail_texts
         }
 
     def _fetch(self, num):
@@ -48,7 +48,7 @@ class USPS:
         summary = summary.lower()
         mapping = {
             "item was delivered": Status.STATUS_DELIVERED,
-            "out for delivery": Status.OUT_FOR_DELIVERY,
+            "out for delivery": Status.STATUS_OUT_FOR_DELIVERY,
             "accept": Status.STATUS_ACCEPTED,
             "pre-shipment": Status.STATUS_PRE_SHIPMENT
         }

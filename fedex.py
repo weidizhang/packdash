@@ -23,8 +23,8 @@ class Fedex:
 
         return {
             "status": status,
-            "last_update": activities[0],
-            "previous_details": activities[1:]
+            "lastUpdate": activities[0],
+            "previousDetails": activities[1:]
         }
 
     def _fetch(self, num):
