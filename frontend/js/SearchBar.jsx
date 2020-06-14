@@ -3,13 +3,14 @@ class SearchBar extends React.Component {
     {
         super(props);
         this.state = {
+            carrier: null,
             tracking: null
         };
     }
 
-    detectCarrier()
+    detectCarrier(tracking)
     {
-        if (!this.state.tracking)
+        if (!tracking)
             return null;
 
         /* Regular expressions found from https://stackoverflow.com/questions/619977/regular-expression-patterns-for-tracking-numbers */
@@ -32,34 +33,49 @@ class SearchBar extends React.Component {
 
         for (const [carrier, regexList] of Object.entries(carriers))
             for (const regex of regexList)
-                if (this.state.tracking.match(regex))
+                if (tracking.match(regex))
                     return carrier;
 
         return null;
     }
 
+    handleClick()
+    {
+        
+    }
+
     handleInputChange(e)
     {
-        this.setState({ tracking: e.target.value.trim() });
+        const eventValue = e.target.value.trim();
+        this.setState({
+            tracking: eventValue,
+            carrier: this.detectCarrier(eventValue)
+        });
     }
 
     render()
     {
         return (
             <div className="input-group">
-                <input type="text"
+                <input
+                    type="text"
                     className="form-control"
                     placeholder="Enter a tracking number from FedEx, USPS, or UPS"
                     onChange={ this.handleInputChange.bind(this) } />
 
                     <div className="input-group-append">
-                        <button type="submit" className="btn btn-secondary">
+                        <button
+                            type="submit"
+                            className="btn btn-secondary"
+                            disabled={ this.state.carrier === null }
+                            onClick={ this.handleClick.bind(this) }>
+
                             <i className="fa fa-search" aria-hidden="true"></i>
                         </button>
                     </div>
 
                     <span className="badge badge-pill badge-info" id="search-carrier-badge">
-                        { this.detectCarrier() }
+                        { this.state.carrier }
                     </span>
             </div>
         );
