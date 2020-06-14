@@ -61,7 +61,8 @@ class Fedex:
 
     def _format_activities(self, activities):
         def pretty_activity(activity):
-            return "{} {}, {}: {}".format(
+            display_str = "{} {}, {}: {}" if activity["scanLocation"] else "{} {}{}: {}"
+            return display_str.format(
                 activity["date"],
                 activity["time"],
                 activity["scanLocation"],
