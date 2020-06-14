@@ -14,11 +14,17 @@ class PackageCard extends React.Component {
             previousDetails: null,
 
             // For component render state information
+            isBookmarkHover: false,
             isError: false,
             isExpanded: false,
             isLoading: false
         };
         this.mainCardRef = React.createRef();
+    }
+
+    handleBookmarkHover()
+    {
+        this.setState({ isBookmarkHover: !this.state.isBookmarkHover });
     }
 
     handleCollapseClick()
@@ -29,6 +35,11 @@ class PackageCard extends React.Component {
     hasPreviousDetails()
     {
         return this.state.previousDetails && this.state.previousDetails.length > 0;
+    }
+
+    isSaved()
+    {
+        return true;
     }
 
     onSearchBarInput(carrier, tracking)
@@ -50,7 +61,9 @@ class PackageCard extends React.Component {
                 this.setState({
                     carrier: carrier,
                     tracking: tracking,
-                    
+
+                    // Reset the component states to defaults
+                    isBookmarkHover: false,
                     isError: false,
                     isExpanded: false,
                     isLoading: false
@@ -74,19 +87,23 @@ class PackageCard extends React.Component {
     renderErrorCard()
     {
         return (
-            <div className="card">
-                <div className="card-header">Package Details</div>
+            <div>
+                <div className="card">
+                    <div className="card-header">Package Details</div>
 
-                <div className="card-body text-center">
-                    <div className="text-danger">
-                        <i className="fa fa-exclamation-triangle" id="pkg-error" aria-hidden="true" />
-                        <h5>Oops!</h5>
+                    <div className="card-body text-center">
+                        <div className="text-danger">
+                            <i className="fa fa-exclamation-triangle" id="pkg-error" aria-hidden="true" />
+                            <h5>Oops!</h5>
+                        </div>
+
+                        <span className="pkg-detail-text">
+                            Please double check your tracking number and try again.
+                        </span>
                     </div>
-
-                    <span className="pkg-detail-text">
-                        Please double check your tracking number and try again.
-                    </span>
                 </div>
+
+                <div className="gap-space"></div>
             </div>
         );
     }
@@ -94,14 +111,18 @@ class PackageCard extends React.Component {
     renderLoadingCard()
     {
         return (
-            <div className="card">
-                <div className="card-header">Package Details</div>
+            <div>
+                <div className="card">
+                    <div className="card-header">Package Details</div>
 
-                <div className="card-body text-center">
-                    <div className="spinner-border text-primary" role="status">
-                        <span className="sr-only">Loading...</span>
+                    <div className="card-body text-center">
+                        <div className="spinner-border text-primary" role="status">
+                            <span className="sr-only">Loading...</span>
+                        </div>
                     </div>
                 </div>
+
+                <div className="gap-space"></div>
             </div>
         );
     }
@@ -109,41 +130,70 @@ class PackageCard extends React.Component {
     renderMainCard()
     {
         return (
-            <div className="card" ref={ this.mainCardRef }>
-                <div className="card-header">Package Details</div>
+            <div>
+                <div className="card" ref={ this.mainCardRef }>
+                    <div className="card-header">Package Details</div>
 
-                <div className="card-body">
-                    <h5 className="card-title">{ this.state.status }</h5>
-                    <span id="pkg-detail-track">
-                        Tracking Number: { }
-                        <a href="#" target="_blank" title={ "View on " +  this.state.carrier }>
-                            <span id="pkg-detail-num">{ this.state.tracking }</span>
-                        </a>
-                    </span>
-                    <span className="badge badge-pill badge-info float-right">{ this.state.carrier }</span>
+                    <div className="card-body">
+                        {/* Status and Bookmarking */}
+                        <div>
+                            <h5 className="card-title d-inline-block">{ this.state.status }</h5>
 
-                    <hr />
+                            <a
+                                href="#" id="pkg-save" className="float-right icon-fix"
 
-                    <span className="pkg-detail-text">
-                        { this.state.lastUpdate }
-                    </span>
+                                title={ this.isSaved() ? "Remove from Saved Packages" : "Add to Saved Packages" }
+                                style={{
+                                    color: this.isSaved() ? "gold" : "#6c757d",
+                                    opacity: this.state.isBookmarkHover ? 0.5 : 1.0
+                                }}
+                                onMouseEnter={ this.handleBookmarkHover.bind(this) }
+                                onMouseLeave={ this.handleBookmarkHover.bind(this) }>
 
-                    <button
-                        className="btn btn-sm btn-primary float-right" id="expand-fix" type="button"
-                        data-toggle="collapse" data-target="#pkg-detail-collapse" aria-expanded="false"
-                        aria-controls="pkg-detail-collapse"
+                                <i
+                                    className="fa fa-bookmark"
+                                    aria-hidden="true" />
+                            </a>
+                        </div>
 
-                        onClick={ this.handleCollapseClick.bind(this) }
-                        disabled={ !this.hasPreviousDetails() }>
-                        <i
-                            className={ "fa fa-chevron-" + (this.state.isExpanded ? "up" : "down") }
-                            aria-hidden="true" />
-                    </button>
+                        {/* Carrier Info */}
+                        <div>
+                            <span id="pkg-detail-track">
+                                Tracking Number: { }
+                                <a href="#" target="_blank" title={ "View on " +  this.state.carrier }>
+                                    <span id="pkg-detail-num">{ this.state.tracking }</span>
+                                </a>
+                            </span>
+                            <span className="badge badge-pill badge-info float-right">{ this.state.carrier }</span>
+                        </div>
 
-                    <div className="collapse" id="pkg-detail-collapse">
-                        { [ ...this.renderMainCardDetails() ] }
+                        <hr />
+
+                        {/* Most recent carrier event or detail */}
+                        <span className="pkg-detail-text">
+                            { this.state.lastUpdate }
+                        </span>
+
+                        {/* Expand to show all carrier events or details */}
+                        <button
+                            className="btn btn-sm btn-primary float-right icon-fix" type="button"
+                            data-toggle="collapse" data-target="#pkg-detail-collapse" aria-expanded="false"
+                            aria-controls="pkg-detail-collapse"
+
+                            onClick={ this.handleCollapseClick.bind(this) }
+                            disabled={ !this.hasPreviousDetails() }>
+                            <i
+                                className={ "fa fa-chevron-" + (this.state.isExpanded ? "up" : "down") }
+                                aria-hidden="true" />
+                        </button>
+
+                        <div className="collapse" id="pkg-detail-collapse">
+                            { [ ...this.renderMainCardDetails() ] }
+                        </div>
                     </div>
                 </div>
+
+                <div className="gap-space"></div>
             </div>
         );
     }

@@ -22,14 +22,14 @@ body
     transition-duration: 0.2s !important;
 }
 
-#expand-fix
-{
-    margin-top: -3px;
-}
-
 .gap-space
 {
     margin-top: 20px;
+}
+
+.icon-fix
+{
+    margin-top: -3px;
 }
 
 #logo-text
