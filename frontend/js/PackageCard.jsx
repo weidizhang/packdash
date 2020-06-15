@@ -25,6 +25,22 @@ class PackageCard extends React.Component {
         this.saveManager = new PackageSaved();
     }
 
+    createCarrierLink()
+    {
+        const carrier = this.state.carrier;
+        const tracking = this.state.tracking;
+
+        if (carrier === "FedEx")
+            return `https://www.fedex.com/apps/fedextrack/?tracknumbers=${tracking}`;
+        else if (carrier === "UPS")
+            return `https://www.ups.com/track?loc=en_US&tracknum=${tracking}&requester=WT/trackdetails`;
+        else if (carrier === "USPS")
+            return `https://tools.usps.com/go/TrackConfirmAction?qtc_tLabels1=${tracking}`;
+
+        // We should never reach this case
+        return "#";
+    }
+
     handleBookmarkClick()
     {
         if (this.saveManager.isSaved(this.state.tracking))
@@ -162,7 +178,7 @@ class PackageCard extends React.Component {
                         <div>
                             <span id="pkg-detail-track">
                                 Tracking Number: { }
-                                <a href="#" target="_blank" title={ "View on " +  this.state.carrier }>
+                                <a href={ this.createCarrierLink() } target="_blank" title={ "View on " +  this.state.carrier }>
                                     <span id="pkg-detail-num">{ this.state.tracking }</span>
                                 </a>
                             </span>
