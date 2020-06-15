@@ -14,33 +14,31 @@ class PackageCard extends React.Component {
             previousDetails: null,
 
             // For component render state information
+            isBookmarked: false,
             isBookmarkHover: false,
             isError: false,
             isExpanded: false,
             isLoading: false
         };
         this.mainCardRef = React.createRef();
+        this.saveManager = new PackageSaved();
     }
 
-    handleBookmarkHover()
+    handleBookmarkClick()
     {
-        this.setState({ isBookmarkHover: !this.state.isBookmarkHover });
+        if (this.saveManager.isSaved(this.state.tracking))
+            this.saveManager.removeItem(this.state.tracking);
+        else
+            this.saveManager.addItem(this.state.tracking, this.state.carrier);
+
+        this.setState({ isBookmarked: !this.state.isBookmarked });
     }
 
-    handleCollapseClick()
-    {
-        this.setState({ isExpanded: !this.state.isExpanded });
-    }
+    handleBookmarkHover = () => this.setState({ isBookmarkHover: !this.state.isBookmarkHover });
 
-    hasPreviousDetails()
-    {
-        return this.state.previousDetails && this.state.previousDetails.length > 0;
-    }
+    handleCollapseClick = () => this.setState({ isExpanded: !this.state.isExpanded });
 
-    isSaved()
-    {
-        return true;
-    }
+    hasPreviousDetails = () => this.state.previousDetails && this.state.previousDetails.length > 0;
 
     onSearchBarInput(carrier, tracking)
     {
@@ -63,6 +61,7 @@ class PackageCard extends React.Component {
                     tracking: tracking,
 
                     // Reset the component states to defaults
+                    isBookmarked: this.saveManager.isSaved(tracking),
                     isBookmarkHover: false,
                     isError: false,
                     isExpanded: false,
@@ -142,11 +141,12 @@ class PackageCard extends React.Component {
                             <a
                                 href="#" id="pkg-save" className="float-right icon-fix"
 
-                                title={ this.isSaved() ? "Remove from Saved Packages" : "Add to Saved Packages" }
+                                title={ this.state.isBookmarked ? "Remove from Saved Packages" : "Add to Saved Packages" }
                                 style={{
-                                    color: this.isSaved() ? "gold" : "#6c757d",
+                                    color: this.state.isBookmarked ? "gold" : "#6c757d",
                                     opacity: this.state.isBookmarkHover ? 0.5 : 1.0
                                 }}
+                                onClick={ this.handleBookmarkClick.bind(this) }
                                 onMouseEnter={ this.handleBookmarkHover.bind(this) }
                                 onMouseLeave={ this.handleBookmarkHover.bind(this) }>
 
