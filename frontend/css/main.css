@@ -55,6 +55,11 @@ body
     margin-bottom: 5px;
 }
 
+.save-badge
+{
+    margin-right: 10px;
+}
+
 #search-carrier-badge
 {
     position: absolute;

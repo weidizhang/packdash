@@ -21,6 +21,7 @@ class PackageCard extends React.Component {
             isLoading: false
         };
         this.mainCardRef = React.createRef();
+        this.savedCard = window.savedCard.current;
         this.saveManager = new PackageSaved();
     }
 
@@ -32,6 +33,7 @@ class PackageCard extends React.Component {
             this.saveManager.addItem(this.state.tracking, this.state.carrier);
 
         this.setState({ isBookmarked: !this.state.isBookmarked });
+        this.savedCard.onPackageSavedUpdate();
     }
 
     handleBookmarkHover = () => this.setState({ isBookmarkHover: !this.state.isBookmarkHover });
