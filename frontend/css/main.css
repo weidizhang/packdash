@@ -5,6 +5,12 @@ body
     margin-bottom: 30px;
 }
 
+.card-alert-icon
+{
+    font-size: 54px;
+    margin-bottom: 5px;
+}
+
 .card-header
 {
     font-weight: bold;
@@ -47,12 +53,6 @@ body
 .pkg-detail-text
 {
     font-size: 14px;
-}
-
-#pkg-error
-{
-    font-size: 54px;
-    margin-bottom: 5px;
 }
 
 .save-badge

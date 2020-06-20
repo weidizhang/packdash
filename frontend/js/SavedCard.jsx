@@ -11,6 +11,36 @@ class SavedCard extends React.Component {
 
     render()
     {
+        if (this.state.saved.length == 0)
+            return this.renderBlankCard();
+        return this.renderMainCard();
+    }
+
+    renderBlankCard()
+    {
+        return (
+            <div>
+                <div className="card">
+                    <div className="card-header">Saved Packages</div>
+
+                    <div className="card-body text-center">
+                        <div className="text-info">
+                            <i className="card-alert-icon fa fa-bookmark" aria-hidden="true" />
+                            <h5>Your Saved List is Empty!</h5>
+                        </div>
+
+                        <span className="pkg-detail-text">
+                            To get started, click the bookmark icon to the right of the package status { }
+                            after making a search.
+                        </span>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    renderMainCard()
+    {
         return (
             <div>
                 <div className="card">

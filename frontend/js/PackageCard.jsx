@@ -110,7 +110,7 @@ class PackageCard extends React.Component {
 
                     <div className="card-body text-center">
                         <div className="text-danger">
-                            <i className="fa fa-exclamation-triangle" id="pkg-error" aria-hidden="true" />
+                            <i className="card-alert-icon fa fa-exclamation-triangle" aria-hidden="true" />
                             <h5>Oops!</h5>
                         </div>
 
