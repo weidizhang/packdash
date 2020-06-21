@@ -71,12 +71,14 @@ class SavedCard extends React.Component {
         for (const [i, [tracking, data]] of Object.entries(this.state.saved))
         {
             const { carrier, name } = JSON.parse(data);
-            const header = name ?
-                ( <> <a href="#">{ name }</a> &mdash; { tracking } </> ) :
-                ( <a href="#">{ tracking }</a> );
 
-            const divider = (i == this.state.saved.length - 1) ? null : <hr />;
+            const pkgView = () => this.pkgCard.onSearchBarInput(carrier, tracking);
             const pkgDelete = () => this.onPackageDelete(tracking).bind(this);
+            
+            const divider = (i == this.state.saved.length - 1) ? null : <hr />;
+            const header = name ?
+                ( <> <a href="#" onClick={ pkgView }>{ name }</a> &mdash; { tracking } </> ) :
+                ( <a href="#" onClick={ pkgView }>{ tracking }</a> );
 
             yield (
                 <div key={ tracking }>
