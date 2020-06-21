@@ -86,7 +86,7 @@ class SavedCard extends React.Component {
                         { header }
                     </h6>
                     <span className="float-right">
-                        <span className="badge badge-pill badge-info save-badge">{ carrier }</span>
+                        <span className="badge badge-pill badge-info save-badge save-badge-no-select">{ carrier }</span>
                         <button
                             className="btn btn-sm btn-primary float-right icon-fix"
                             type="button"

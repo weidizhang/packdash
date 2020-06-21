@@ -60,6 +60,12 @@ body
     margin-right: 10px;
 }
 
+.save-badge-no-select
+{
+    -webkit-user-select: none;
+    user-select: none;
+}
+
 #search-carrier-badge
 {
     position: absolute;
