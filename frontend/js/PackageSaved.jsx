@@ -1,12 +1,14 @@
 class PackageSaved
 {
-    // Uses (tracking, carrier) as (key, value) so that we have unique keys,
-    // unlike other functions that take the parameters in order of (carrier, tracking)
-    addItem = (tracking, carrier) => localStorage.setItem(tracking, carrier);
+    // We know that tracking numbers are always unique
+    // --> So we don't have to force names to always be unique
+    // Using ( key = tracking, value = object with data )
+    addItem = (tracking, carrier, name) =>
+                    localStorage.setItem(tracking, JSON.stringify({ carrier: carrier, name: name }));
 
     getAll = () => Object.entries(localStorage);
     
-    isSaved = (item) => localStorage.getItem(item) !== null;
+    isSaved = (tracking) => localStorage.getItem(tracking) !== null;
 
     removeItem = (tracking) => localStorage.removeItem(tracking);
 }

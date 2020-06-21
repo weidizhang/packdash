@@ -22,6 +22,7 @@ class PackageCard extends React.Component {
         };
         this.mainCardRef = React.createRef();
         this.savedCard = window.savedCard.current;
+        this.savedCard.setPkgCardInstance(this);
         this.saveManager = new PackageSaved();
     }
 
@@ -43,13 +44,33 @@ class PackageCard extends React.Component {
 
     handleBookmarkClick()
     {
+        // Delete the bookmark if it is already saved
         if (this.saveManager.isSaved(this.state.tracking))
+        {
             this.saveManager.removeItem(this.state.tracking);
-        else
-            this.saveManager.addItem(this.state.tracking, this.state.carrier);
+            this.setState({ isBookmarked: false });
+            this.savedCard.onPackageSavedUpdate();
+            return;
+        }
 
-        this.setState({ isBookmarked: !this.state.isBookmarked });
-        this.savedCard.onPackageSavedUpdate();
+        // Otherwise, we are creating a new bookmark
+        bootbox.prompt({
+            title: "Let's give it a name!",
+            placeholder: "e.g. Amazon Package (optional)",
+            callback: (result) => {
+                // Cancel button clicked
+                if (result === null)
+                    return;
+
+                // Add the bookmark
+                // Empty name is OK - it will be rendered differently
+                const name = result.trim();
+                this.saveManager.addItem(this.state.tracking, this.state.carrier, name);
+
+                this.setState({ isBookmarked: true });
+                this.savedCard.onPackageSavedUpdate();
+            }
+        });
     }
 
     handleBookmarkHover = () => this.setState({ isBookmarkHover: !this.state.isBookmarkHover });
