@@ -1,4 +1,4 @@
-from http.server import SimpleHTTPRequestHandler
+from http.server import BaseHTTPRequestHandler
 from urllib import parse
 
 from fedex import Fedex
@@ -8,10 +8,7 @@ from ups import UPS
 import config
 import json
 
-class WebInterface(SimpleHTTPRequestHandler):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, directory = "./frontend/", **kwargs)
-
+class WebInterface(BaseHTTPRequestHandler):
     def do_POST(self):
         found_api = False
 
