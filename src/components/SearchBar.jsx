@@ -1,9 +1,11 @@
-class SearchBar extends React.Component {
+import React, { Component } from "react";
+
+class SearchBar extends Component {
     constructor(props)
     {
         super(props);
 
-        this.pkgCard = window.pkgCard.current;
+        this.pkgCard = null;//window.pkgCard.current;
         this.state = {
             carrier: null,
             tracking: ""
@@ -98,5 +100,4 @@ class SearchBar extends React.Component {
     }
 }
 
-const domContainer = document.querySelector("#search-container");
-ReactDOM.render(React.createElement(SearchBar), domContainer);
+export default SearchBar;

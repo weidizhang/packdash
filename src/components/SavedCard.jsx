@@ -1,12 +1,16 @@
-class SavedCard extends React.Component {
+import React, { Component } from "react";
+
+class SavedCard extends Component
+{
     constructor(props)
     {
         super(props);
 
         // Declare it null here as a reminder we should receive it from the instance later
         this.pkgCard = null;
-        this.saveManager = new PackageSaved();
-        this.state = { saved: this.saveManager.getAll() };
+        this.saveManager = null; //new PackageSaved();
+        //this.state = { saved: this.saveManager.getAll() };
+        this.state = { saved: [] };
     }
 
     onPackageDelete(tracking)
@@ -103,6 +107,4 @@ class SavedCard extends React.Component {
     setPkgCardInstance = (obj) => this.pkgCard = obj;
 }
 
-const domContainer = document.querySelector("#saved-container");
-const savedCard = React.createRef();
-ReactDOM.render(React.createElement(SavedCard, { ref: savedCard }), domContainer);
+export default SavedCard;

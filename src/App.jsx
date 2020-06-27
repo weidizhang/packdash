@@ -1,26 +1,28 @@
-import React from 'react';
-// import logo from './logo.svg';
-// import './App.css';
+import React, { Component } from "react";
 
-function App() {
-    return (
-        <div className="App">
-            <header className="App-header">
-                <img className="App-logo" alt="logo" />
-                <p>
-                    Edit <code>src/App.js</code> and save to reload.
-        </p>
-                <a
-                    className="App-link"
-                    href="https://reactjs.org"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    Learn React
-        </a>
-            </header>
-        </div>
-    );
+import "./assets/main.css";
+
+import SavedCard from "./components/SavedCard";
+import SearchBar from "./components/SearchBar";
+import PackageCard from "./components/PackageCard";
+
+class App extends Component
+{
+    render()
+    {
+        return (
+            <div>
+                <div className="py-3 text-center">
+                    <h1 id="logo-text">packdash</h1>
+                </div>
+
+                <SearchBar />
+                <div className="gap-space" />
+                <PackageCard />
+                <SavedCard />
+            </div>
+        );
+    }
 }
 
 export default App;

@@ -1,4 +1,7 @@
-class PackageCard extends React.Component {
+import React, { Component } from "react";
+
+class PackageCard extends Component
+{
     constructor(props)
     {
         super(props);
@@ -21,9 +24,11 @@ class PackageCard extends React.Component {
             isLoading: false
         };
         this.mainCardRef = React.createRef();
-        this.savedCard = window.savedCard.current;
-        this.savedCard.setPkgCardInstance(this);
-        this.saveManager = new PackageSaved();
+        // this.savedCard = window.savedCard.current;
+        // this.savedCard.setPkgCardInstance(this);
+        this.savedCard = null;
+        //this.saveManager = new PackageSaved();
+        this.saveManager = null;
     }
 
     createCarrierLink()
@@ -54,23 +59,23 @@ class PackageCard extends React.Component {
         }
 
         // Otherwise, we are creating a new bookmark
-        bootbox.prompt({
-            title: "Let's give it a name!",
-            placeholder: "e.g. Amazon Package (optional)",
-            callback: (result) => {
-                // Cancel button clicked
-                if (result === null)
-                    return;
+        // bootbox.prompt({
+        //     title: "Let's give it a name!",
+        //     placeholder: "e.g. Amazon Package (optional)",
+        //     callback: (result) => {
+        //         // Cancel button clicked
+        //         if (result === null)
+        //             return;
 
-                // Add the bookmark
-                // Empty name is OK - it will be rendered differently
-                const name = result.trim();
-                this.saveManager.addItem(this.state.tracking, this.state.carrier, name);
+        //         // Add the bookmark
+        //         // Empty name is OK - it will be rendered differently
+        //         const name = result.trim();
+        //         this.saveManager.addItem(this.state.tracking, this.state.carrier, name);
 
-                this.setState({ isBookmarked: true });
-                this.savedCard.onPackageSavedUpdate();
-            }
-        });
+        //         this.setState({ isBookmarked: true });
+        //         this.savedCard.onPackageSavedUpdate();
+        //     }
+        // });
     }
 
     handleBookmarkHover = () => this.setState({ isBookmarkHover: !this.state.isBookmarkHover });
@@ -82,31 +87,31 @@ class PackageCard extends React.Component {
     onSearchBarInput(carrier, tracking)
     {
         this.setState({ isLoading: true }, () => {
-            const pkgAPI = new PackageAPI();
-            pkgAPI.getTrackingData(carrier, tracking, (data) => {
-                if ("error" in data)
-                {
-                    // No other states have to be set because of the render order checks
-                    this.setState({
-                        isError: true,
-                        isLoading: false
-                    });
-                    return;
-                }
+            // const pkgAPI = new PackageAPI();
+            // pkgAPI.getTrackingData(carrier, tracking, (data) => {
+            //     if ("error" in data)
+            //     {
+            //         // No other states have to be set because of the render order checks
+            //         this.setState({
+            //             isError: true,
+            //             isLoading: false
+            //         });
+            //         return;
+            //     }
 
-                this.setState(data);
-                this.setState({
-                    carrier: carrier,
-                    tracking: tracking,
+            //     this.setState(data);
+            //     this.setState({
+            //         carrier: carrier,
+            //         tracking: tracking,
 
-                    // Reset the component states to defaults
-                    isBookmarked: this.saveManager.isSaved(tracking),
-                    isBookmarkHover: false,
-                    isError: false,
-                    isExpanded: false,
-                    isLoading: false
-                });
-            });
+            //         // Reset the component states to defaults
+            //         isBookmarked: this.saveManager.isSaved(tracking),
+            //         isBookmarkHover: false,
+            //         isError: false,
+            //         isExpanded: false,
+            //         isLoading: false
+            //     });
+            // });
         });
     }
 
@@ -269,6 +274,4 @@ class PackageCard extends React.Component {
     }
 }
 
-const domContainer = document.querySelector("#pkg-detail-container");
-const pkgCard = React.createRef();
-ReactDOM.render(React.createElement(PackageCard, { ref: pkgCard }), domContainer);
+export default PackageCard;
