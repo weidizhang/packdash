@@ -1,59 +1,68 @@
-# packdash
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-Created by Weidi Zhang
+## Available Scripts
 
-## Feature Overview
-- Fluid and user-friendly interface with animations and prompts where necessary
-- Automatically detects the package carrier of a tracking code (supporting FedEx, UPS, and USPS)
-- Expandable package detail results while first showing a card with the essential information
-- Ability to save (or "bookmark") and name certain packages for quick access later
+In the project directory, you can run:
 
-## Screenshots
-**Main Screen:**
+### `npm start`
 
-![Screenshot from Main Screen](screenshots/main-screen.jpg)
+Runs the app in the development mode.<br />
+Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-**Package Details:**
+The page will reload if you make edits.<br />
+You will also see any lint errors in the console.
 
-![Screenshot from Package Details](screenshots/pkg-details.jpg)
+### `npm test`
 
-**Error in Package Details:**
+Launches the test runner in the interactive watch mode.<br />
+See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-![Screenshot from Package Details with Error](screenshots/error.jpg)
+### `npm run build`
 
-**Expanded Details:**
+Builds the app for production to the `build` folder.<br />
+It correctly bundles React in production mode and optimizes the build for the best performance.
 
-![Screenshot from Main Screen](screenshots/expanded-details.jpg)
+The build is minified and the filenames include the hashes.<br />
+Your app is ready to be deployed!
 
-## Backend
+See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-Python 3.7 is used for the backend, which creates an API wrapped around the FedEx, UPS, and USPS APIs for a streamlined interface for frontend <-> backend communications.
+### `npm run eject`
 
-Note that the [requests](https://requests.readthedocs.io/en/master/) library is used as well for all web requests.
+**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
 
-The web server used to serve the API is used to serve the frontend as well.
+If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-### File Descriptions
-- ```fedex.py```, ```ups.py```, ```usps.py```: Respective classes to fetch data from a package carrier's API
-- ```web.py```: Server class that serves the wrapper API and frontend website
+Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
 
-### Running packdash
-1. Edit ```config_example.py``` with USPS API key and port selection; rename to ```config.py```
-2. Run ```main.py``` which starts the web server
+You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
 
-## Frontend
+## Learn More
 
-ReactJS is the main JavaScript library used to write the frontend, where the main code can be found at the following path: ```frontend/js/```.
+You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
-Babel is used for JSX support straight in the browser, and some other libraries such as Bootbox is used for prompts.
+To learn React, check out the [React documentation](https://reactjs.org/).
 
-### File Descriptions
-- ```PackageAPI.jsx```: Fetches data from the backend wrapper API
-- ```PackageCard.jsx```: Component and logic for the package details card, including loading information, error handling, bookmarking, etc.
-- ```PackageHook.jsx```: Hook for collapse animation triggers done by external library
-- ```PackageSaved.jsx```: Handler class for all the saved packages; also pre-sorts them for friendly display
-- ```SavedCard.jsx```: Component and logic for the saved packages card, which shows basic saved package information and actions
-- ```SearchBar.jsx```: Component and logic for the search bar that handles carrier detection and passing information to the package card component
+### Code Splitting
 
-### Notes
-The script tag for React and ReactDOM in ```frontend/index.html``` should be replaced with production versions of the library when not in development.
+This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+
+### Analyzing the Bundle Size
+
+This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
+
+### Making a Progressive Web App
+
+This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
+
+### Advanced Configuration
+
+This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
+
+### Deployment
+
+This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
+
+### `npm run build` fails to minify
+
+This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
