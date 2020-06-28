@@ -23,7 +23,7 @@ const detailsInitialState = {
         lastUpdate: null,
         previousDetails: null
     },
-    detailsRenderState: PackageDetailsRenderStates.NORMAL,
+    detailsRenderState: PackageDetailsRenderStates.HIDDEN,
 };
 
 export function detailsCard(state = detailsInitialState, action)

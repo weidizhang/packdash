@@ -19,6 +19,7 @@ export const SET_PACKAGE_DETAILS_RENDER_STATE = "SET_PACKAGE_DETAILS_RENDER_STAT
 export const PackageDetailsRenderStates = {
     EXPANDED: "EXPANDED",
     ERROR: "ERROR",
+    HIDDEN: "HIDDEN",
     LOADING: "LOADING",
     NORMAL: "NORMAL"
 };
