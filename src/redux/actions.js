@@ -6,13 +6,11 @@
 export const SAVED_PACKAGE_ADD = "SAVED_PACKAGE_ADD";
 export const SAVED_PACKAGE_REMOVE = "SAVED_PACKAGE_REMOVE";
 
-// ...
-export const SET_PACKAGE_DETAILS_RENDER_STATE = "SET_PACKAGE_DETAILS_RENDER_STATE";
+// For when a search performed by search bar successfully yields information
+export const SET_PACKAGE_DETAILS = "SET_PACKAGE_DETAILS";
 
-// For when a search on a tracking number is initiated, i.e. by clicking
-// a saved bookmark or using the search bar
-export const TRACKING_SEARCH_START = "TRACKING_SEARCH_START";
-export const TRACKING_SEARCH_STOP = "TRACKING_SEARCH_STOP";
+// For when a search performed by search bar needs to update search progress
+export const SET_PACKAGE_DETAILS_RENDER_STATE = "SET_PACKAGE_DETAILS_RENDER_STATE";
 
 /*
  * Other Constants
@@ -41,15 +39,14 @@ export const savedPackageRemove =
         tracking: tracking
     });
 
-export const setPackageDetailsRenderState =
-    (renderState) => ({ renderState: renderState });
-
-export const trackingSearchStart =
-    (tracking, carrier) => ({
-        type: TRACKING_SEARCH_START,
-        tracking: tracking,
-        carrier: carrier
+export const setPackageDetails =
+    (detailsObject) => ({
+        type: SET_PACKAGE_DETAILS,
+        details: detailsObject
     });
 
-export const trackingSearchStop =
-    () => ({ type: TRACKING_SEARCH_STOP });
+export const setPackageDetailsRenderState =
+    (renderState) => ({
+        type: SET_PACKAGE_DETAILS_RENDER_STATE,
+        renderState: renderState
+    });

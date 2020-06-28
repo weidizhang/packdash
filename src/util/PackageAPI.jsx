@@ -8,6 +8,9 @@ class PackageAPI
             body: "trackingNum=" + tracking
         })
             .then( (response) => response.json() )
-            .then( (data) => callback(data) );
+            .then( (data) => callback(data) )
+            .catch( () => callback(false) );
     }
 }
+
+export const packageAPI = new PackageAPI();

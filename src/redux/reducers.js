@@ -1,7 +1,7 @@
 import { combineReducers } from "redux";
 import {
+    SET_PACKAGE_DETAILS,
     SET_PACKAGE_DETAILS_RENDER_STATE,
-    TRACKING_SEARCH_START,
 
     PackageDetailsRenderStates
 } from "./actions";
@@ -30,20 +30,16 @@ export function detailsCard(state = detailsInitialState, action)
 {
     switch (action.type)
     {
+        case SET_PACKAGE_DETAILS:
+            return {
+                ...state,
+                details: action.details
+            }
+
         case SET_PACKAGE_DETAILS_RENDER_STATE:
             return {
                 ...state,
                 detailsRenderState: action.renderState
-            }
-
-        case TRACKING_SEARCH_START:
-            return {
-                ...state,
-                details: {
-                    ...state.details,
-                    carrier: action.carrier,
-                    tracking: action.tracking
-                }
             }
 
         default:

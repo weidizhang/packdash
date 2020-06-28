@@ -1,7 +1,14 @@
 import React, { Component } from "react";
 
 import { connect } from "react-redux";
-import { trackingSearchStart } from "../redux/actions";
+import {
+    setPackageDetails,
+    setPackageDetailsRenderState,
+
+    PackageDetailsRenderStates
+} from "../redux/actions";
+
+import { packageAPI } from "../util/PackageAPI";
 
 class SearchBar extends Component
 {
@@ -49,8 +56,10 @@ class SearchBar extends Component
 
     handleClick()
     {
-        // Action mapped from Redux to start the search in the package details card
-        this.props.trackingSearchStart(this.state.tracking, this.state.carrier);
+        // Send an action telling that our package details card should report our
+        // new loading state
+        this.props.setPackageDetailsRenderState(PackageDetailsRenderStates.LOADING);
+        this.performTrackingSearch(this.state.carrier, this.state.tracking);
 
         // Reset the local state to clear the search bar form inputs
         this.setState({
@@ -71,6 +80,26 @@ class SearchBar extends Component
         this.setState({
             tracking: eventValue,
             carrier: this.detectCarrier(eventValue)
+        });
+    }
+
+    performTrackingSearch(carrier, tracking)
+    {
+        packageAPI.getTrackingData(carrier, tracking, (data) => {
+            if (data === false || "error" in data)
+            {
+                // Tell the package details card that the search failed
+                this.props.setPackageDetailsRenderState(PackageDetailsRenderStates.ERROR);
+                return;
+            }
+
+            // Otherwise, tell the package details card the information we fetched
+            this.props.setPackageDetails({
+                carrier: carrier,
+                tracking: tracking,
+                ...data
+            });
+            this.props.setPackageDetailsRenderState(PackageDetailsRenderStates.NORMAL);
         });
     }
 
@@ -106,7 +135,9 @@ class SearchBar extends Component
 }
 
 const mapDispatchToProps = (dispatch) => ({
-    trackingSearchStart:
-        (tracking, carrier) => dispatch(trackingSearchStart(tracking, carrier))
+    setPackageDetails:
+        (tracking, carrier) => dispatch(setPackageDetails(tracking, carrier)),
+    setPackageDetailsRenderState:
+        (renderState) => dispatch(setPackageDetailsRenderState(renderState))
 });
 export default connect(null, mapDispatchToProps)(SearchBar);
