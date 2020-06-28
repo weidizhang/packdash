@@ -13,3 +13,7 @@ ReactDOM.render(
     </React.StrictMode>,
     document.getElementById("root")
 );
+
+// Allow for debugging from dev console using store.getState()
+if (process.env.NODE_ENV !== "production")
+    window.store = store;

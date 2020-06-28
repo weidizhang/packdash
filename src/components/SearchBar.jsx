@@ -1,11 +1,15 @@
 import React, { Component } from "react";
 
-class SearchBar extends Component {
+import { connect } from "react-redux";
+import { trackingSearchStart } from "../redux/actions";
+
+class SearchBar extends Component
+{
     constructor(props)
     {
         super(props);
 
-        this.pkgCard = null;//window.pkgCard.current;
+        // Local carrier and tracking states for capturing form inputs
         this.state = {
             carrier: null,
             tracking: ""
@@ -45,9 +49,10 @@ class SearchBar extends Component {
 
     handleClick()
     {
-        this.pkgCard.onSearchBarInput(this.state.carrier, this.state.tracking);
+        // Action mapped from Redux to start the search in the package details card
+        this.props.trackingSearchStart(this.state.tracking, this.state.carrier);
 
-        // Reset the state to default state
+        // Reset the local state to clear the search bar form inputs
         this.setState({
             carrier: null,
             tracking: ""
@@ -100,4 +105,8 @@ class SearchBar extends Component {
     }
 }
 
-export default SearchBar;
+const mapDispatchToProps = (dispatch) => ({
+    trackingSearchStart:
+        (tracking, carrier) => dispatch(trackingSearchStart(tracking, carrier))
+});
+export default connect(null, mapDispatchToProps)(SearchBar);
