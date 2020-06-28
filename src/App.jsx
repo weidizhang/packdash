@@ -5,6 +5,7 @@ import "./assets/main.css";
 import SavedCard from "./components/SavedCard";
 import SearchBar from "./components/SearchBar";
 import PackageCard from "./components/PackageCard";
+import RowContainer from "./components/RowContainer";
 
 class App extends Component
 {
@@ -16,10 +17,19 @@ class App extends Component
                     <h1 id="logo-text">packdash</h1>
                 </div>
 
-                <SearchBar />
+                <RowContainer>
+                    <SearchBar />
+                </RowContainer>
+
                 <div className="gap-space" />
-                <PackageCard />
-                <SavedCard />
+
+                <RowContainer>
+                    <PackageCard />
+                </RowContainer>
+
+                <RowContainer>
+                    <SavedCard />
+                </RowContainer>
             </div>
         );
     }

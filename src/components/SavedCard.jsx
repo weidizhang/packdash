@@ -27,7 +27,7 @@ class SavedCard extends Component
 
     render()
     {
-        if (this.state.saved.length == 0)
+        if (this.state.saved.length === 0)
             return this.renderBlankCard();
         return this.renderMainCard();
     }
@@ -79,7 +79,7 @@ class SavedCard extends Component
             const pkgView = () => this.pkgCard.onSearchBarInput(carrier, tracking);
             const pkgDelete = () => this.onPackageDelete(tracking).bind(this);
             
-            const divider = (i == this.state.saved.length - 1) ? null : <hr />;
+            const divider = (i === this.state.saved.length - 1) ? null : <hr />;
             const header = name ?
                 ( <> <a href="#" onClick={ pkgView }>{ name }</a> &mdash; { tracking } </> ) :
                 ( <a href="#" onClick={ pkgView }>{ tracking }</a> );
