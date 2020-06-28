@@ -1,14 +1,7 @@
 import React, { Component } from "react";
 
 import { connect } from "react-redux";
-import {
-    setPackageDetails,
-    setPackageDetailsRenderState,
-
-    PackageDetailsRenderStates
-} from "../redux/actions";
-
-import { packageAPI } from "../util/PackageAPI";
+import { doTrackingSearch } from "../redux/actions";
 
 class SearchBar extends Component
 {
@@ -56,10 +49,9 @@ class SearchBar extends Component
 
     handleClick()
     {
-        // Send an action telling that our package details card should report our
-        // new loading state
-        this.props.setPackageDetailsRenderState(PackageDetailsRenderStates.LOADING);
-        this.performTrackingSearch(this.state.carrier, this.state.tracking);
+        // Send an action starting the search which dispatch the appropriate actions
+        // to the package details card based on results
+        this.props.doTrackingSearch(this.state.tracking, this.state.carrier);
 
         // Reset the local state to clear the search bar form inputs
         this.setState({
@@ -80,26 +72,6 @@ class SearchBar extends Component
         this.setState({
             tracking: eventValue,
             carrier: this.detectCarrier(eventValue)
-        });
-    }
-
-    performTrackingSearch(carrier, tracking)
-    {
-        packageAPI.getTrackingData(carrier, tracking, (data) => {
-            if (data === false || "error" in data)
-            {
-                // Tell the package details card that the search failed
-                this.props.setPackageDetailsRenderState(PackageDetailsRenderStates.ERROR);
-                return;
-            }
-
-            // Otherwise, tell the package details card the information we fetched
-            this.props.setPackageDetails({
-                carrier: carrier,
-                tracking: tracking,
-                ...data
-            });
-            this.props.setPackageDetailsRenderState(PackageDetailsRenderStates.NORMAL);
         });
     }
 
@@ -135,9 +107,7 @@ class SearchBar extends Component
 }
 
 const mapDispatchToProps = (dispatch) => ({
-    setPackageDetails:
-        (tracking, carrier) => dispatch(setPackageDetails(tracking, carrier)),
-    setPackageDetailsRenderState:
-        (renderState) => dispatch(setPackageDetailsRenderState(renderState))
+    doTrackingSearch:
+        (tracking, carrier) => dispatch(doTrackingSearch(tracking, carrier))
 });
 export default connect(null, mapDispatchToProps)(SearchBar);

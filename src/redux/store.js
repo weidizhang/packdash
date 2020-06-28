@@ -1,5 +1,6 @@
-import { createStore } from "redux";
-import packdashApp from "./reducers";
+import { applyMiddleware, createStore } from "redux";
+import thunk from "redux-thunk";
+import rootReducer from "./reducers";
 
-const store = createStore(packdashApp);
+const store = createStore(rootReducer, applyMiddleware(thunk));
 export default store;

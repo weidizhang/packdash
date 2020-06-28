@@ -82,8 +82,8 @@ export function savedCard(state = [], action)
  * Combine the reducers and export it
  */
 
-const packdashApp = combineReducers({
+const rootReducer = combineReducers({
     detailsCard,
     savedCard
 });
-export default packdashApp;
+export default rootReducer;

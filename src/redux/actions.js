@@ -1,6 +1,11 @@
+import { packageAPI } from "../util/PackageAPI";
+
 /*
  * Action Types
  */
+
+// For when a search is triggered, either by search bar or saved card info
+export const DO_TRACKING_SEARCH = "DO_TRACKING_SEARCH";
 
 // For when a user adds or removes a saved package bookmark
 export const SAVED_PACKAGE_ADD = "SAVED_PACKAGE_ADD";
@@ -27,6 +32,38 @@ export const PackageDetailsRenderStates = {
 /*
  * Action Creators
  */
+
+/*
+ * Belonging to search actions / root reducer
+ */
+
+export const doTrackingSearch =
+    (tracking, carrier) => (
+        // Return a function that takes dispatch as a parameter as we are using thunk middleware
+        (dispatch) =>
+            packageAPI.getTrackingData(tracking, carrier)
+                .then( (response) => response.json() )
+                .then(
+                    (data) => {
+                        // Tell the package details card that the search failed
+                        if (!data || "error" in data)
+                        {
+                            dispatch(setPackageDetailsRenderState(PackageDetailsRenderStates.ERROR));
+                            return;
+                        }
+
+                        // Otherwise, tell the package details card the information we fetched
+                        dispatch(setPackageDetails({
+                            carrier: carrier,
+                            tracking: tracking,
+                            ...data
+                        }));
+                        dispatch(setPackageDetailsRenderState(PackageDetailsRenderStates.NORMAL));
+                    }
+                )
+                // Bad response from server, i.e. not json format, etc.
+                .catch( () => dispatch(setPackageDetailsRenderState(PackageDetailsRenderStates.ERROR)) )
+    );
 
 /*
  * Belonging to savedCard reducer
