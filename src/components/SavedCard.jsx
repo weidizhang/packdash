@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 
 import { connect } from "react-redux";
-import { savedPackageRemove } from "../redux/actions";
+import { doTrackingSearch, savedPackageRemove } from "../redux/actions";
 
 class SavedCard extends Component
 {
@@ -66,7 +66,7 @@ class SavedCard extends Component
         {
             const { tracking, carrier, name } = data;
 
-            const pkgView = () => {}; // TODO: send action to load package details... need to change search to use thunk
+            const pkgView = () => this.props.doTrackingSearch(tracking, carrier);
             const pkgDelete = () => this.onPackageDelete(tracking).bind(this);
             
             const divider = (i === this.state.saved.length - 1) ? null : <hr />;
@@ -119,6 +119,9 @@ class SavedCard extends Component
 // TODO: ensure redux-persist saves only savedCard reducer
 const mapStateToProps = (state) => ({ saved: state.savedCard });
 const mapDispatchToProps = (dispatch) => ({
-    savedPackageRemove: (tracking) => dispatch(savedPackageRemove(tracking))
+    doTrackingSearch:
+        (tracking, carrier) => dispatch(doTrackingSearch(tracking, carrier)),
+    savedPackageRemove:
+        (tracking) => dispatch(savedPackageRemove(tracking))
 });
 export default connect(mapStateToProps, mapDispatchToProps)(SavedCard);
