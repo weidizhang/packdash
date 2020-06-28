@@ -1,33 +1,23 @@
 import React, { Component } from "react";
 
+import { connect } from "react-redux";
+import { savedPackageRemove } from "../redux/actions";
+
 class SavedCard extends Component
 {
-    constructor(props)
-    {
-        super(props);
-
-        // Declare it null here as a reminder we should receive it from the instance later
-        this.pkgCard = null;
-        this.saveManager = null; //new PackageSaved();
-        //this.state = { saved: this.saveManager.getAll() };
-        this.state = { saved: [] };
-    }
-
     onPackageDelete(tracking)
     {
-        this.saveManager.removeItem(tracking);
-        this.onPackageSavedUpdate();
+        this.props.savedPackageRemove(tracking);
 
+        // TODO: do we need to replace this code?
         // In the case the saved bookmark is on display in package details right now
-        if (this.pkgCard.state.tracking === tracking)
-            this.pkgCard.setState({ isBookmarked: false });
+        // if (this.pkgCard.state.tracking === tracking)
+        //     this.pkgCard.setState({ isBookmarked: false });
     }
-
-    onPackageSavedUpdate = () => this.setState({ saved: this.saveManager.getAll() });
 
     render()
     {
-        if (this.state.saved.length === 0)
+        if (this.props.saved.length === 0)
             return this.renderBlankCard();
         return this.renderMainCard();
     }
@@ -72,11 +62,11 @@ class SavedCard extends Component
 
     *renderPackages()
     {
-        for (const [i, [tracking, data]] of Object.entries(this.state.saved))
+        for (const [i, data] of Object.entries(this.sortedPackages()))
         {
-            const { carrier, name } = JSON.parse(data);
+            const { tracking, carrier, name } = data;
 
-            const pkgView = () => this.pkgCard.onSearchBarInput(carrier, tracking);
+            const pkgView = () => {}; // TODO: send action to load package details... need to change search to use thunk
             const pkgDelete = () => this.onPackageDelete(tracking).bind(this);
             
             const divider = (i === this.state.saved.length - 1) ? null : <hr />;
@@ -104,7 +94,31 @@ class SavedCard extends Component
         }
     }
 
-    setPkgCardInstance = (obj) => this.pkgCard = obj;
+    sortedPackages()
+    {
+        // Ensure we do not mutate our local prop state
+        const savedCopy = [...this.props.saved];
+
+        // We want to sort is so that named packages (alphetical) comes first;
+        // then comes unnamed packages (displayed by alphabetical tracking number)
+        return savedCopy.sort((a, b) => {
+            // Both packages are named
+            if (a.name && b.name)
+                return a.name.localeCompare(b.name);
+
+            // Only one of the packages is named
+            if (a.name || b.name)
+                return a.name ? -1 : 1;
+
+            // Neither package is named, so compare tracking #
+            return a.tracking.localeCompare(b.tracking);
+        });
+    }
 }
 
-export default SavedCard;
+// TODO: ensure redux-persist saves only savedCard reducer
+const mapStateToProps = (state) => ({ saved: state.savedCard });
+const mapDispatchToProps = (dispatch) => ({
+    savedPackageRemove: (tracking) => dispatch(savedPackageRemove(tracking))
+});
+export default connect(mapStateToProps, mapDispatchToProps)(SavedCard);

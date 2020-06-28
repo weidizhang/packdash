@@ -1,5 +1,8 @@
 import { combineReducers } from "redux";
 import {
+    SAVED_PACKAGE_ADD,
+    SAVED_PACKAGE_REMOVE,
+
     SET_PACKAGE_DETAILS,
     SET_PACKAGE_DETAILS_RENDER_STATE,
 
@@ -34,13 +37,13 @@ export function detailsCard(state = detailsInitialState, action)
             return {
                 ...state,
                 details: action.details
-            }
+            };
 
         case SET_PACKAGE_DETAILS_RENDER_STATE:
             return {
                 ...state,
                 detailsRenderState: action.renderState
-            }
+            };
 
         default:
             return state;
@@ -51,9 +54,28 @@ export function detailsCard(state = detailsInitialState, action)
  * Reducers for the saved packages card
  */
 
+// Default state = no saved cards
+
 export function savedCard(state = [], action)
 {
-    return state;
+    switch (action.type)
+    {
+        case SAVED_PACKAGE_ADD:
+            return [
+                ...state,
+                {
+                    tracking: action.tracking,
+                    carrier: action.carrier,
+                    name: action.name
+                }
+            ];
+
+        case SAVED_PACKAGE_REMOVE:
+            return state;
+
+        default:
+            return state;
+    }
 };
 
 /*

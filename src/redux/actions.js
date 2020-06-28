@@ -28,10 +28,16 @@ export const PackageDetailsRenderStates = {
  * Action Creators
  */
 
+/*
+ * Belonging to savedCard reducer
+ */
+
 export const savedPackageAdd =
-    (tracking) => ({
+    (tracking, carrier, name) => ({
         type: SAVED_PACKAGE_ADD,
-        tracking: tracking
+        tracking: tracking,
+        carrier: carrier,
+        name: name
     });
 
 export const savedPackageRemove =
@@ -39,6 +45,10 @@ export const savedPackageRemove =
         type: SAVED_PACKAGE_REMOVE,
         tracking: tracking
     });
+
+/*
+ * Belonging to detailsCard reducer
+ */
 
 export const setPackageDetails =
     (detailsObject) => ({
