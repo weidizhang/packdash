@@ -55,20 +55,20 @@ export function detailsCard(state = detailsInitialState, action)
  */
 
 // Default state = no saved cards
+// Each entry in the object is in the format { tracking: { carrier: '', name: '' } }
 
-export function savedCard(state = [], action)
+export function savedCard(state = {}, action)
 {
     switch (action.type)
     {
         case SAVED_PACKAGE_ADD:
-            return [
+            return {
                 ...state,
-                {
-                    tracking: action.tracking,
+                [action.tracking]: {
                     carrier: action.carrier,
                     name: action.name
                 }
-            ];
+            };
 
         case SAVED_PACKAGE_REMOVE:
             return state;

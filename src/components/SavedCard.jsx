@@ -17,7 +17,7 @@ class SavedCard extends Component
 
     render()
     {
-        if (this.props.saved.length === 0)
+        if (Object.keys(this.props.saved).length === 0)
             return this.renderBlankCard();
         return this.renderMainCard();
     }
@@ -96,22 +96,26 @@ class SavedCard extends Component
 
     sortedPackages()
     {
-        // Ensure we do not mutate our local prop state
-        const savedCopy = [...this.props.saved];
+        // Ensure we do not mutate our local prop state and make it easier to iterate
+        // Entry format = [ tracking, data object name and carrier ]
+        const savedEntries = Object.entries(this.props.saved);
 
         // We want to sort is so that named packages (alphetical) comes first;
         // then comes unnamed packages (displayed by alphabetical tracking number)
-        return savedCopy.sort((a, b) => {
+        return savedEntries.sort((a, b) => {
+            const aData = JSON.parse(a[1]);
+            const bData = JSON.parse(b[1]);
+
             // Both packages are named
-            if (a.name && b.name)
-                return a.name.localeCompare(b.name);
+            if (aData.name && bData.name)
+                return aData.name.localeCompare(bData.name);
 
             // Only one of the packages is named
-            if (a.name || b.name)
-                return a.name ? -1 : 1;
+            if (aData.name || bData.name)
+                return aData.name ? -1 : 1;
 
             // Neither package is named, so compare tracking #
-            return a.tracking.localeCompare(b.tracking);
+            return a[0].localeCompare(b[0]);
         });
     }
 }
