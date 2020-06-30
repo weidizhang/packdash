@@ -21,13 +21,6 @@ body
     margin: 0px !important;
 }
 
-.collapsing
-{
-    /* Override bootstrap's slower durations */
-    -webkit-transition-duration: 0.2s !important;
-    transition-duration: 0.2s !important;
-}
-
 .gap-space
 {
     margin-top: 20px;

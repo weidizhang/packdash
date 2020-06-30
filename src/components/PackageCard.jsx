@@ -19,6 +19,10 @@ class PackageCard extends Component
             isBookmarkHover: false,
             isExpanded: false
         };
+
+        // Ref to the rendered main card and collapse for assiting the expand animation
+        this.mainCard = React.createRef();
+        this.mainCardCollapse = React.createRef();
     }
 
     componentDidUpdate(oldProps)
@@ -51,21 +55,54 @@ class PackageCard extends Component
     handleBookmarkClick()
     {
         const { tracking, carrier } = this.props.details;
-        const name = null;
 
-        if (!this.isBookmarked())
-            this.props.savedPackageAdd(tracking, carrier, name);
-        else
+        // Deleting existing bookmark is a simple redux action
+        if (this.isBookmarked())
+        {
             this.props.savedPackageRemove(tracking);
+            return;
+        }
 
-        console.log(this.props);
+        // Otherwise prompt for a name to associate with the new bookmark
+        // Used window.bootbox as bootbox npm package requires bootstrap lib (not used by project)
+        window.bootbox.prompt({
+            title: "Let's give it a name!",
+            placeholder: "e.g. Amazon Package (optional)",
+            callback: (result) => {
+                // Cancel button clicked
+                if (result === null)
+                    return;
+
+                // Add the bookmark; empty name is OK - it will be rendered differently
+                const name = result.trim();
+                this.props.savedPackageAdd(tracking, carrier, name);
+            }
+        });
     }
 
     hasPreviousDetails = () => this.props.details.previousDetails && this.props.details.previousDetails.length > 0;
 
     isBookmarked = () => this.props.details.tracking && (this.props.details.tracking in this.props.saved);
 
-    invertUIState = (stateKey) => this.setState({ [stateKey]: !this.state[stateKey] });
+    invertUIState = (stateKey, callback = null) => this.setState({ [stateKey]: !this.state[stateKey] }, callback);
+
+    onCollapseClick()
+    {
+        this.invertUIState("isExpanded", () => {
+            // After the collapse/expansion animation completes, and we are expanded state,
+            // we want to trigger a scroll animation to see all the details
+            if (this.state.isExpanded)
+            {
+                const collapseStyle = window.getComputedStyle(this.mainCardCollapse.current, null);
+
+                let animationSpeed = collapseStyle.getPropertyValue("transition-duration");
+                animationSpeed = Number.parseFloat(animationSpeed.split(" ")[0]);
+
+                const offsetTime = 0.02;
+                setTimeout(this.scrollToDetails.bind(this), (animationSpeed + offsetTime) * 1000);
+            }
+        });
+    }
 
     render()
     {
@@ -136,7 +173,7 @@ class PackageCard extends Component
     {
         return (
             <div>
-                <div className="card">
+                <div className="card" ref={ this.mainCard }>
                     <div className="card-header">Package Details</div>
 
                     <div className="card-body">
@@ -195,7 +232,8 @@ class PackageCard extends Component
                             data-toggle="collapse" data-target="#pkg-detail-collapse" aria-expanded="false"
                             aria-controls="pkg-detail-collapse"
 
-                            onClick={ () => this.invertUIState("isExpanded") }
+                            ref={ this.mainCardCollapse }
+                            onClick={ this.onCollapseClick.bind(this) }
                             disabled={ !this.hasPreviousDetails() }>
                             <i
                                 className={ "fa fa-chevron-" + (this.state.isExpanded ? "up" : "down") }
@@ -227,6 +265,23 @@ class PackageCard extends Component
                     </span>
                 </div>
             );
+    }
+
+    scrollToDetails()
+    {
+        // We check if the UI collapse is still expanded state, in case that the user
+        // quickly collapsed the element before animation finished
+        if (this.state.isExpanded && this.mainCard.current && this.mainCardCollapse.current)
+        {
+            const mainCardRect = this.mainCard.current.getBoundingClientRect();
+            const mainCardTop = mainCardRect.top + window.pageYOffset;
+            const offset = 15;
+
+            window.scrollTo({
+                behavior: "smooth",
+                top: mainCardTop - offset
+            });
+        }
     }
 }
 
