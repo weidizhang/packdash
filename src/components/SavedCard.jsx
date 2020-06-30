@@ -5,19 +5,13 @@ import { doTrackingSearch, savedPackageRemove } from "../redux/actions";
 
 class SavedCard extends Component
 {
-    onPackageDelete(tracking)
-    {
-        this.props.savedPackageRemove(tracking);
+    getSavedEntriesCount = () => Object.keys(this.props.saved).length;
 
-        // TODO: do we need to replace this code?
-        // In the case the saved bookmark is on display in package details right now
-        // if (this.pkgCard.state.tracking === tracking)
-        //     this.pkgCard.setState({ isBookmarked: false });
-    }
+    onPackageDelete = (tracking) => this.props.savedPackageRemove(tracking);
 
     render()
     {
-        if (Object.keys(this.props.saved).length === 0)
+        if (this.getSavedEntriesCount() === 0)
             return this.renderBlankCard();
         return this.renderMainCard();
     }
@@ -62,14 +56,16 @@ class SavedCard extends Component
 
     *renderPackages()
     {
-        for (const [i, data] of Object.entries(this.sortedPackages()))
+        const savedLen = this.getSavedEntriesCount();
+
+        for (const [i, [tracking, data]] of Object.entries(this.sortedPackages()))
         {
-            const { tracking, carrier, name } = data;
+            const { carrier, name } = data;
 
             const pkgView = () => this.props.doTrackingSearch(tracking, carrier);
-            const pkgDelete = () => this.onPackageDelete(tracking).bind(this);
-            
-            const divider = (i === this.state.saved.length - 1) ? null : <hr />;
+            const pkgDelete = () => this.onPackageDelete(tracking);
+
+            const divider = (Number.parseInt(i, 10) === savedLen - 1) ? null : <hr />;
             const header = name ?
                 ( <> <a href="#" onClick={ pkgView }>{ name }</a> &mdash; { tracking } </> ) :
                 ( <a href="#" onClick={ pkgView }>{ tracking }</a> );
@@ -103,16 +99,13 @@ class SavedCard extends Component
         // We want to sort is so that named packages (alphetical) comes first;
         // then comes unnamed packages (displayed by alphabetical tracking number)
         return savedEntries.sort((a, b) => {
-            const aData = JSON.parse(a[1]);
-            const bData = JSON.parse(b[1]);
-
             // Both packages are named
-            if (aData.name && bData.name)
-                return aData.name.localeCompare(bData.name);
+            if (a[1].name && b[1].name)
+                return a[1].name.localeCompare(b[1].name);
 
             // Only one of the packages is named
-            if (aData.name || bData.name)
-                return aData.name ? -1 : 1;
+            if (a[1].name || b[1].name)
+                return a[1].name ? -1 : 1;
 
             // Neither package is named, so compare tracking #
             return a[0].localeCompare(b[0]);

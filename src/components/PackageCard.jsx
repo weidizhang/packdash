@@ -1,7 +1,12 @@
 import React, { Component } from "react";
 
 import { connect } from "react-redux";
-import { PackageDetailsRenderStates } from "../redux/actions";
+import {
+    savedPackageAdd,
+    savedPackageRemove,
+
+    PackageDetailsRenderStates
+} from "../redux/actions";
 
 class PackageCard extends Component
 {
@@ -30,8 +35,7 @@ class PackageCard extends Component
 
     createCarrierLink()
     {
-        const carrier = this.props.details.carrier;
-        const tracking = this.props.details.tracking;
+        const { carrier, tracking } = this.props.details;
 
         if (carrier === "FedEx")
             return `https://www.fedex.com/apps/fedextrack/?tracknumbers=${tracking}`;
@@ -44,7 +48,18 @@ class PackageCard extends Component
         return "#";
     }
 
-    handleBookmarkClick = () => true; // TODO:
+    handleBookmarkClick()
+    {
+        const { tracking, carrier } = this.props.details;
+        const name = null;
+
+        if (!this.isBookmarked())
+            this.props.savedPackageAdd(tracking, carrier, name);
+        else
+            this.props.savedPackageRemove(tracking);
+
+        console.log(this.props);
+    }
 
     hasPreviousDetails = () => this.props.details.previousDetails && this.props.details.previousDetails.length > 0;
 
@@ -219,4 +234,10 @@ const mapStateToProps = (state) => ({
     ...state.detailsCard,
     saved: { ...state.savedCard }
 });
-export default connect(mapStateToProps)(PackageCard);
+const mapDispatchToProps = (dispatch) => ({
+    savedPackageAdd:
+        (tracking, carrier, name) => dispatch(savedPackageAdd(tracking, carrier, name)),
+    savedPackageRemove:
+        (tracking) => dispatch(savedPackageRemove(tracking))
+});
+export default connect(mapStateToProps, mapDispatchToProps)(PackageCard);

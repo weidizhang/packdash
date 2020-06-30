@@ -71,7 +71,10 @@ export function savedCard(state = {}, action)
             };
 
         case SAVED_PACKAGE_REMOVE:
-            return state;
+            // Note that _ is a value we don't care about: the data associated with the
+            // now deleted package.
+            const { [action.tracking]: _ , ...newState } = state;
+            return newState;
 
         default:
             return state;
