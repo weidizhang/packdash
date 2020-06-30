@@ -41,7 +41,11 @@ export const doTrackingSearch =
     (tracking, carrier) => (
         // Return a function that takes dispatch as a parameter as we are using thunk middleware
         (dispatch) =>
-            packageAPI.getTrackingData(tracking, carrier)
+        {
+            // Indicate that the search has started to the user
+            dispatch(setPackageDetailsRenderState(PackageDetailsRenderStates.LOADING));
+
+            return packageAPI.getTrackingData(tracking, carrier)
                 .then( (response) => response.json() )
                 .then(
                     (data) => {
@@ -63,6 +67,7 @@ export const doTrackingSearch =
                 )
                 // Bad response from server, i.e. not json format, etc.
                 .catch( () => dispatch(setPackageDetailsRenderState(PackageDetailsRenderStates.ERROR)) )
+        }
     );
 
 /*

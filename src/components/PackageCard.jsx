@@ -5,6 +5,29 @@ import { PackageDetailsRenderStates } from "../redux/actions";
 
 class PackageCard extends Component
 {
+    constructor(props)
+    {
+        super(props);
+
+        // Local state for UI elements such as hovers
+        this.state = {
+            isBookmarkHover: false,
+            isExpanded: false
+        };
+    }
+
+    componentDidUpdate(oldProps)
+    {
+        if (oldProps.detailsRenderState != this.props.detailsRenderState &&
+                this.props.detailsRenderState === PackageDetailsRenderStates.NORMAL)
+            // Whenever the main card is re-rendered switching from some other render state
+            // to the normal render state, we need to reset the UI element states
+            this.setState({
+                isBookmarkHover: false,
+                isExpanded: false
+            });
+    }
+
     createCarrierLink()
     {
         const carrier = this.props.details.carrier;
@@ -21,11 +44,19 @@ class PackageCard extends Component
         return "#";
     }
 
+    handleBookmarkClick = () => true; // TODO:
+
+    hasPreviousDetails = () => this.props.details.previousDetails && this.props.details.previousDetails.length > 0;
+
+    isBookmarked = () => this.props.details.tracking && (this.props.details.tracking in this.props.saved);
+
+    invertUIState = (stateKey) => this.setState({ [stateKey]: !this.state[stateKey] });
+
     render()
     {
-        // Search bar will tell us our render state
+        // Search trigger actions will tell us our render state
         const renderState = this.props.detailsRenderState;
-        
+
         switch (renderState)
         {
             case PackageDetailsRenderStates.LOADING:
@@ -89,12 +120,103 @@ class PackageCard extends Component
     renderMainCard()
     {
         return (
-            <b>Testing</b>
+            <div>
+                <div className="card">
+                    <div className="card-header">Package Details</div>
+
+                    <div className="card-body">
+                        {/* Status and Bookmarking */}
+                        <div>
+                            <h5 className="card-title d-inline-block">{ this.props.details.status }</h5>
+
+                            <a
+                                href="#" id="pkg-save" className="float-right icon-fix"
+
+                                title={ this.isBookmarked() ? "Remove from Saved Packages" : "Add to Saved Packages" }
+                                style={{
+                                    color: this.isBookmarked() ? "gold" : "#6c757d",
+                                    opacity: this.state.isBookmarkHover ? 0.5 : 1.0
+                                }}
+                                onClick={ this.handleBookmarkClick.bind(this) }
+                                onMouseEnter={ () => this.invertUIState("isBookmarkHover") }
+                                onMouseLeave={ () => this.invertUIState("isBookmarkHover") }
+                                >
+
+                                <i
+                                    className="fa fa-bookmark"
+                                    aria-hidden="true" />
+                            </a>
+                        </div>
+
+                        {/* Carrier Info */}
+                        <div>
+                            <span id="pkg-detail-track">
+                                Tracking Number: { }
+                                <a
+                                    target="_blank"
+                                    href={ this.createCarrierLink() }
+                                    title={ "View on " +  this.props.details.carrier }>
+
+                                    <span id="pkg-detail-num">
+                                        { this.props.details.tracking }
+                                    </span>
+                                </a>
+                            </span>
+                            <span className="badge badge-pill badge-info float-right">
+                                { this.props.details.carrier }
+                            </span>
+                        </div>
+
+                        <hr />
+
+                        {/* Most recent carrier event or detail */}
+                        <span className="pkg-detail-text">
+                            { this.props.details.lastUpdate }
+                        </span>
+
+                        {/* Expand to show all carrier events or details */}
+                        <button
+                            className="btn btn-sm btn-primary float-right icon-fix" type="button"
+                            data-toggle="collapse" data-target="#pkg-detail-collapse" aria-expanded="false"
+                            aria-controls="pkg-detail-collapse"
+
+                            onClick={ () => this.invertUIState("isExpanded") }
+                            disabled={ !this.hasPreviousDetails() }>
+                            <i
+                                className={ "fa fa-chevron-" + (this.state.isExpanded ? "up" : "down") }
+                                aria-hidden="true" />
+                        </button>
+
+                        <div className="collapse" id="pkg-detail-collapse">
+                            { [ ...this.renderMainCardDetails() ] }
+                        </div>
+                    </div>
+                </div>
+
+                <div className="gap-space"></div>
+            </div>
         );
+    }
+
+    *renderMainCardDetails()
+    {
+        if (!this.hasPreviousDetails())
+            return null;
+
+        for (const detail of this.props.details.previousDetails)
+            yield (
+                <div key={ detail }>
+                    <hr />
+                    <span className="pkg-detail-text">
+                        { detail }
+                    </span>
+                </div>
+            );
     }
 }
 
 const mapStateToProps = (state) => ({
-    ...state.detailsCard
+    ...state.detailsCard,
+    saved: { ...state.savedCard }
 });
 export default connect(mapStateToProps)(PackageCard);
