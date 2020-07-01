@@ -7,7 +7,7 @@ def main():
     app = Flask(__name__)
     api = Api(app)
 
-    api.add_resource(PackdashApp, "/carrier/<string:carrier>")
+    api.add_resource(PackdashApp, "/carrier/<string:carrier>/<string:tracking>")
     app.run(debug = True, port = 4000)
 
 if __name__ == "__main__":
