@@ -3,5 +3,4 @@
 #
 # This can be found here: https://www.usps.com/business/web-tools-apis/
 
-http_port = 4000
 usps_key = ""
