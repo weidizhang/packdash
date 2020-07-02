@@ -8,6 +8,8 @@ import {
     PackageDetailsRenderStates
 } from "../redux/actions";
 
+import PackageMap from "./PackageMap";
+
 class PackageCard extends Component
 {
     constructor(props)
@@ -106,6 +108,7 @@ class PackageCard extends Component
 
     render()
     {
+        return <PackageMap />;
         // Search trigger actions will tell us our render state
         const renderState = this.props.detailsRenderState;
 
