@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Map, TileLayer, Marker, Popup } from "react-leaflet";
+import { Map, TileLayer, Marker, Polyline, Popup } from "react-leaflet";
 
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -39,15 +39,27 @@ class PackageMap extends Component
             {
                 location: "zzz, yyy",
                 position: [51.519, -0.09]
+            },
+            {
+                location: "fff, yyy",
+                position: [51.495, -0.09]
             }
         ];
 
-        for (const { location, position } of markers)
+        for (const [i, { location, position }] of Object.entries(markers))
+        {
+            const polyline = (i > 0) ?
+                                <Polyline key={ i } positions={ [ position, markers[i-1].position ] } weight={ 4 } /> :
+                                null;
             yield (
-                <Marker key={ location } position={ position }>
-                    <Popup>{ location }</Popup>
-                </Marker>
+                <>
+                    <Marker key={ i } position={ position }>
+                        <Popup>{ location }</Popup>
+                    </Marker>
+                    { polyline }
+                </>
             );
+        }
     }
 }
 

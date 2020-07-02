@@ -108,7 +108,6 @@ class PackageCard extends Component
 
     render()
     {
-        return <PackageMap />;
         // Search trigger actions will tell us our render state
         const renderState = this.props.detailsRenderState;
 
@@ -246,6 +245,9 @@ class PackageCard extends Component
                         <div className="collapse" id="pkg-detail-collapse">
                             { [ ...this.renderMainCardDetails() ] }
                         </div>
+
+                        <hr />
+                        <PackageMap />
                     </div>
                 </div>
 
