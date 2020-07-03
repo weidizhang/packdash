@@ -247,7 +247,7 @@ class PackageCard extends Component
                         </div>
 
                         <hr />
-                        <PackageMap />
+                        <PackageMap markers={ this.props.details.locationMarkers } />
                     </div>
                 </div>
 

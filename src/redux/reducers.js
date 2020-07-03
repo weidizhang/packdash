@@ -22,9 +22,10 @@ const detailsInitialState = {
         tracking: null,
 
         // Information that will be fetched from the backend API
-        status: null,
         lastUpdate: null,
-        previousDetails: null
+        locationMarkers: null,
+        previousDetails: null,
+        status: null
     },
     detailsRenderState: PackageDetailsRenderStates.HIDDEN,
 };
