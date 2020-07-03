@@ -37,10 +37,10 @@ class USPS:
         merged_details.extend(track_info["TrackDetail"])
 
         return {
-            "status": self._format_status(summary["Event"]),
             "lastUpdate": self._format_activities([ summary ])[0],
             "locationMarkers": self._parse_locations(merged_details),
-            "previousDetails": detail_texts
+            "previousDetails": detail_texts,
+            "status": self._format_status(summary["Event"])
         }
 
     def _fetch(self, num):
@@ -79,17 +79,30 @@ class USPS:
 
     def _parse_locations(self, track_info):
         locations = []
+        locations_events = {}
+
         for detail in track_info:
+            location = None
+
             if detail["EventState"]:
-                locations.append("{EventCity}, {EventState} {EventZIPCode}".format(**detail))
+                location = "{EventCity}, {EventState} {EventZIPCode}".format(**detail)
             elif detail["EventCity"] and "DISTRIBUTION CENTER" in detail["EventCity"]:
-                locations.append(detail["EventCity"][:-len(" DISTRIBUTION CENTER")])
+                location = detail["EventCity"][:-len(" DISTRIBUTION CENTER")]
+
+            if location:
+                locations.append(location)
+
+                # Using a separate tracker for events simplifies the process of removing duplicates
+                # significantly and will always reflect the "last" event that the occured at a location
+                # as we know the track_info list order goes from most recent->least recent
+                if location not in locations_events:
+                    locations_events[location] = self._format_status(detail["Event"])
 
         util.remove_duplicates(locations)
         return [
             {
-                "location": location,
+                "eventText": "{} - {}".format(locations_events[location], location),
                 "position": geocode.location_to_latlng(location) 
             }
             for location in locations
-        ]
+        ][::-1] # Reversed ordering so marker ordering / numbering goes in order of least recent->most recent
