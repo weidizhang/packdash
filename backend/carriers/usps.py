@@ -1,7 +1,7 @@
-import mapquest.geocode as geocode
+from carriers.base import Base
+
 import xmltodict
 import requests
-import util.misc as util
 
 class Status:
     STATUS_ACCEPTED = "Accepted"
@@ -9,7 +9,7 @@ class Status:
     STATUS_IN_TRANSIT = "In Transit"
     STATUS_OUT_FOR_DELIVERY = "Out for Delivery"
 
-class USPS:
+class USPS(Base):
     def __init__(self, user_id):
         self.uid = user_id
 
@@ -98,11 +98,4 @@ class USPS:
                 if location not in locations_events:
                     locations_events[location] = self._format_status(detail["Event"])
 
-        util.remove_duplicates(locations)
-        return [
-            {
-                "eventText": "{} - {}".format(locations_events[location], location),
-                "position": geocode.location_to_latlng(location) 
-            }
-            for location in locations
-        ][::-1] # Reversed ordering so marker ordering / numbering goes in order of least recent->most recent
+        return super()._parse_locations_base(locations, locations_events)

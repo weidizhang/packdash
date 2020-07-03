@@ -1,9 +1,9 @@
-import mapquest.geocode as geocode
+from carriers.base import Base
+
 import json
 import requests
-import util.misc as util
 
-class Fedex:
+class Fedex(Base):
     def track(self, num):
         data = self._fetch(num)
         if not data:
@@ -90,11 +90,4 @@ class Fedex:
             if location not in locations_events:
                 locations_events[location] = activity["status"]
 
-        util.remove_duplicates(locations)
-        return [
-            {
-                "eventText": "{} - {}".format(locations_events[location], location),
-                "position": geocode.location_to_latlng(location) 
-            }
-            for location in locations
-        ][::-1]
+        return super()._parse_locations_base(locations, locations_events)

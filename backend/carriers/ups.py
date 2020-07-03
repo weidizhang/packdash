@@ -1,10 +1,11 @@
+from carriers.base import Base
+
 import json
 import requests
-import util.misc as util
 
-class UPS:
+class UPS(Base):
     def track(self, num):
-        data = self._fetch(num).decode("utf-8")
+        data = self._fetch(num)
         if not data:
             return False
 
@@ -19,10 +20,10 @@ class UPS:
         activities = self._format_activities(details["shipmentProgressActivities"])
 
         return {
-            "status": status,
             "lastUpdate": activities[0],
             "locationMarkers": self._parse_locations(details["shipmentProgressActivities"]),
-            "previousDetails": activities[1:]
+            "previousDetails": activities[1:],
+            "status": status
         }
 
     def _fetch(self, num):
@@ -34,23 +35,37 @@ class UPS:
         }
 
         res = requests.post(endpoint, json = post_json)
-        return res.content
+        return res.text
+
+    def _fix_case(self, s):
+        return s.strip() if s != s.upper() else s[0].upper() + s[1:].lower().strip()
 
     def _format_activities(self, activities):
         def pretty_activity(activity):
-            fix_case = lambda s : s.strip() if s != s.upper() else s[0].upper() + s[1:].lower().strip()
             return "{} {}, {}: {}".format(
                 activity["date"],
                 activity["time"],
                 activity["location"],
-                fix_case(activity["activityScan"])
+                self._fix_case(activity["activityScan"])
             )
         return list( map(pretty_activity, activities) )
 
     def _parse_locations(self, activities):
-        locations = [ activity["location"] for activity in activities ]
-        if len(locations) > 0:
-            locations = locations[:-1]
+        #! For implementation comments, see usps.py.
 
-        util.remove_duplicates(locations)
-        return locations
+        # For UPS only, we exclude the first chronological status if there is more than
+        # one activity, as it is always the country of origin
+        if len(activities) > 0:
+            activities = activities[:-1]
+
+        locations = []
+        locations_events = {}
+
+        for activity in activities:
+            location = activity["location"]
+            locations.append(location)
+
+            if location not in locations_events:
+                locations_events[location] = self._fix_case(activity["activityScan"])
+
+        return super()._parse_locations_base(locations, locations_events)
