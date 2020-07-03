@@ -1,5 +1,6 @@
 import json
 import requests
+import util.misc as util
 
 class UPS:
     def track(self, num):
@@ -20,6 +21,7 @@ class UPS:
         return {
             "status": status,
             "lastUpdate": activities[0],
+            "locationMarkers": self._parse_locations(details["shipmentProgressActivities"]),
             "previousDetails": activities[1:]
         }
 
@@ -44,3 +46,11 @@ class UPS:
                 fix_case(activity["activityScan"])
             )
         return list( map(pretty_activity, activities) )
+
+    def _parse_locations(self, activities):
+        locations = [ activity["location"] for activity in activities ]
+        if len(locations) > 0:
+            locations = locations[:-1]
+
+        util.remove_duplicates(locations)
+        return locations

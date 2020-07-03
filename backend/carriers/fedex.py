@@ -1,5 +1,6 @@
 import json
 import requests
+import util.misc as util
 
 class Fedex:
     def track(self, num):
@@ -24,6 +25,7 @@ class Fedex:
         return {
             "status": status,
             "lastUpdate": activities[0],
+            "locationMarkers": self._parse_locations(package["scanEventList"]),
             "previousDetails": activities[1:]
         }
 
@@ -69,3 +71,9 @@ class Fedex:
                 activity["status"]
             )
         return list( map(pretty_activity, activities) )
+
+    def _parse_locations(self, activities):
+        locations = [ activity["scanLocation"] for activity in activities ][:-1]
+
+        util.remove_duplicates(locations)
+        return locations
