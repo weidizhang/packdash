@@ -14,19 +14,38 @@ L.Icon.Default.mergeOptions({
 
 class PackageMap extends Component
 {
+    constructor(props)
+    {
+        super(props);
+
+        // Ref used to automatically open the most recent event marker on the map
+        this.lastMarker = React.createRef();
+    }
+
     autoFitBounds()
     {
         if (!this.props.markers || this.props.markers.length == 0)
             // No markers means we will default the bounds to the center of the contiguous US
             return latLngBounds([ 39.50, -98.35 ]);
 
-        const markers = this.props.markers;
+        // Use the last 3 markers (most recent locations) as the focus area for better UX
+        const markers = this.props.markers.slice(Math.max(0, this.props.markers.length - 3));
         const bounds = latLngBounds(markers[0].position);
         for (const { position } of markers)
             bounds.extend(position);
 
-        // Add some padding to see every marker
-        return bounds.pad(0.5);
+        // Originally planned to use .pad(...) to expand markers but does not seem necessary.
+        return bounds;
+    }
+
+    componentDidUpdate()
+    {
+        // Automatically open the most recent event marker on the map
+        if (this.lastMarker.current)
+        {
+            const lastMarkerElement = this.lastMarker.current.leafletElement;
+            lastMarkerElement.openPopup();
+        }
     }
 
     render()
@@ -48,18 +67,16 @@ class PackageMap extends Component
         const markers = this.props.markers;
         for (const [i, { eventText, position }] of Object.entries(markers))
         {
-            // The two keys have to be unique, so we use -i and i instead of i for both
-
             const polyline = (i > 0) ?
-                                <Polyline key={ -i } positions={ [ position, markers[i-1].position ] } weight={ 4 } /> :
+                                <Polyline positions={ [ position, markers[i-1].position ] } weight={ 4 } /> :
                                 null;
             yield (
-                <>
-                    <Marker key={ i } position={ position }>
+                <div key={ i }>
+                    <Marker position={ position } ref={ this.lastMarker }>
                         <Popup>{ eventText }</Popup>
                     </Marker>
                     { polyline }
-                </>
+                </div>
             );
         }
     }
