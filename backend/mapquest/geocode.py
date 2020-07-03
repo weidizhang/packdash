@@ -11,6 +11,7 @@ def expand_location_name(location):
     #! is not given in the location string and there is no zip code
     #! 
     #! Can account for this by converting states to their full name, i.e. CA -> California
+    #! Also need to note that the country is USA if a mapping was successful to aid Mapquest
     location_parts = location.split()
 
     for i in range(len(location_parts)):
@@ -26,6 +27,7 @@ def expand_location_name(location):
                     break
 
         if expanded:
+            location_parts.append("United States")
             break
 
     return " ".join(location_parts)
