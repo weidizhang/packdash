@@ -1,3 +1,4 @@
+import mapquest.geocode as geocode
 import xmltodict
 import requests
 import util.misc as util
@@ -85,4 +86,10 @@ class USPS:
                 locations.append(detail["EventCity"][:-len(" DISTRIBUTION CENTER")])
 
         util.remove_duplicates(locations)
-        return locations
+        return [
+            {
+                "location": location,
+                "position": geocode.location_to_latlng(location) 
+            }
+            for location in locations
+        ]
