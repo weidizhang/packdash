@@ -1,63 +1,88 @@
+import xmltodict
 import requests
-import xml.etree.ElementTree as ET
+import util.misc as util
 
 class Status:
     STATUS_ACCEPTED = "Accepted"
     STATUS_DELIVERED = "Delivered"
     STATUS_IN_TRANSIT = "In Transit"
     STATUS_OUT_FOR_DELIVERY = "Out for Delivery"
-    STATUS_PRE_SHIPMENT = "Pre-Shipment"
 
 class USPS:
     def __init__(self, user_id):
         self.uid = user_id
 
     def track(self, num):
-        data = self._fetch(num).decode("utf-8")
-        if not data:
+        # Test for error with response or error with parsing
+        try:
+            data = xmltodict.parse(self._fetch(num))
+        except Exception:
             return False
 
-        data_xml = ET.fromstring(data)
-        track_summary = data_xml.find(".//TrackSummary")
-        if track_summary is None or "could not locate" in track_summary.text:
+        track_info = data["TrackResponse"]["TrackInfo"]
+
+        # Bad tracking code
+        if "Error" in track_info:
             return False
 
-        track_summary = track_summary.text
-        track_details = data_xml.findall(".//TrackDetail")
+        # Parse and organize the information
+        summary = track_info["TrackSummary"]
+
         detail_texts = []
-        if track_details is not None:
-            for detail in track_details:
-                detail_texts.append(detail.text)
+        if "TrackDetail" in track_info and len(track_info["TrackDetail"]) > 0:
+            detail_texts = self._format_activities(track_info["TrackDetail"])
+
+        merged_details = [ summary ]
+        merged_details.extend(track_info["TrackDetail"])
 
         return {
-            "status": self._parse_status(track_summary),
-            "lastUpdate": track_summary,
+            "status": self._format_status(summary["Event"]),
+            "lastUpdate": self._format_activities([ summary ])[0],
+            "locationMarkers": self._parse_locations(merged_details),
             "previousDetails": detail_texts
         }
 
     def _fetch(self, num):
         endpoint = "https://secure.shippingapis.com/ShippingAPI.dll"
-        xml_template = '<TrackRequest USERID="{}"><TrackID ID="{}"></TrackID></TrackRequest>'
+        xml_template = '<TrackFieldRequest USERID="{}"><TrackID ID="{}"></TrackID></TrackFieldRequest>'
         params = {
             "API": "TrackV2",
             "XML": xml_template.format(self.uid, num)
         }
 
         res = requests.get(endpoint, params = params)
-        return res.content
+        return res.text
 
-    def _parse_status(self, summary):
-        summary = summary.lower()
+    def _format_activities(self, track_info):
+        activities = []
+        for detail in track_info:
+            format_str = "{Event}, {EventDate}, {EventTime}, {EventCity}, {EventState} {EventZIPCode}" \
+                            if detail["EventState"] else "{Event}, {EventDate}, {EventTime}, {EventCity}"
+            activities.append(format_str.format(**detail))
+        return activities
+
+    def _format_status(self, event):
         mapping = {
-            "item was delivered": Status.STATUS_DELIVERED,
-            "out for delivery": Status.STATUS_OUT_FOR_DELIVERY,
-            "accept": Status.STATUS_ACCEPTED,
-            "pre-shipment": Status.STATUS_PRE_SHIPMENT
+            "Delivered": Status.STATUS_DELIVERED,
+            "Out for Delivery": Status.STATUS_OUT_FOR_DELIVERY,
+            "Accepted": Status.STATUS_ACCEPTED,
+            "Arrived": Status.STATUS_IN_TRANSIT,
+            "Departed": Status.STATUS_IN_TRANSIT
         }
-        for key, status_val in mapping.items():
-            if key in summary:
-                return status_val
+        for key, status in mapping.items():
+            if key in event:
+                return status
 
-        # Assumption: any other text means that it is in transit
-        # TODO: figure out possible error messages
-        return Status.STATUS_IN_TRANSIT
+        #! Do not simplify the event / status info if we don't have a mapping
+        return event
+
+    def _parse_locations(self, track_info):
+        locations = []
+        for detail in track_info:
+            if detail["EventState"]:
+                locations.append("{EventCity}, {EventState} {EventZIPCode}".format(**detail))
+            elif detail["EventCity"] and "DISTRIBUTION CENTER" in detail["EventCity"]:
+                locations.append(detail["EventCity"][:-len(" DISTRIBUTION CENTER")])
+
+        util.remove_duplicates(locations)
+        return locations
