@@ -3,6 +3,7 @@ body
     background-color: #a598ee;
     margin-top: 15%;
     margin-bottom: 30px;
+    transition: margin-top 300ms ease-in-out;
 }
 
 .card-alert-icon

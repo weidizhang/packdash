@@ -29,14 +29,25 @@ class PackageCard extends Component
 
     componentDidUpdate(oldProps)
     {
-        if (oldProps.detailsRenderState != this.props.detailsRenderState &&
-                this.props.detailsRenderState === PackageDetailsRenderStates.NORMAL)
-            // Whenever the main card is re-rendered switching from some other render state
-            // to the normal render state, we need to reset the UI element states
-            this.setState({
-                isBookmarkHover: false,
-                isExpanded: false
-            });
+        if (oldProps.detailsRenderState != this.props.detailsRenderState)
+        {
+            if (this.props.detailsRenderState === PackageDetailsRenderStates.NORMAL)
+            {
+                // Whenever the main card is re-rendered switching from some other render state
+                // to the normal render state, we need to reset the UI element states
+                this.setState({
+                    isBookmarkHover: false,
+                    isExpanded: false
+                });
+
+                // We also need to adjust the body styling so there is not too much extra margin
+                // when we display a large amount of information in the card
+                document.body.style.marginTop = "5%";
+            }
+            else
+                // Revert it back to the original body styling otherwise as there's not much content
+                document.body.style.marginTop = "15%";
+        }
     }
 
     createCarrierLink()
@@ -93,6 +104,9 @@ class PackageCard extends Component
         this.invertUIState("isExpanded", () => {
             // After the collapse/expansion animation completes, and we are expanded state,
             // we want to trigger a scroll animation to see all the details
+            //
+            // Otherwise, we use a scroll animation to bring the page back to the top
+
             if (this.state.isExpanded)
             {
                 const collapseStyle = window.getComputedStyle(this.mainCardCollapse.current, null);
@@ -102,6 +116,13 @@ class PackageCard extends Component
 
                 const offsetTime = 0.02;
                 setTimeout(this.scrollToDetails.bind(this), (animationSpeed + offsetTime) * 1000);
+            }
+            else
+            {
+                window.scrollTo({
+                    behavior: "smooth",
+                    top: 0
+                });
             }
         });
     }
