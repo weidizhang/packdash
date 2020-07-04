@@ -29,6 +29,10 @@ class PackageCard extends Component
 
     componentDidUpdate(oldProps)
     {
+        // Workaround to prevent the transition animation from occurring on first page load
+        // which is an issue when using the style directly
+        document.body.style.transition = "margin-top 300ms ease-in-out";
+
         if (oldProps.detailsRenderState != this.props.detailsRenderState)
         {
             if (this.props.detailsRenderState === PackageDetailsRenderStates.NORMAL)
