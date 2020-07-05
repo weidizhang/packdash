@@ -5,7 +5,7 @@ import "./assets/main.css";
 import SavedCard from "./components/SavedCard";
 import SearchBar from "./components/SearchBar";
 import PackageCard from "./components/PackageCard";
-import RowContainer from "./components/RowContainer";
+import RowContainer from "./components/ui/RowContainer";
 
 class App extends Component
 {

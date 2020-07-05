@@ -3,6 +3,8 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { doTrackingSearch, savedPackageRemove } from "../redux/actions";
 
+import Card from "./ui/Card";
+
 class SavedCard extends Component
 {
     getSavedEntriesCount = () => Object.keys(this.props.saved).length;
@@ -19,38 +21,24 @@ class SavedCard extends Component
     renderBlankCard()
     {
         return (
-            <div>
-                <div className="card">
-                    <div className="card-header">Saved Packages</div>
+            <Card
+                header="Saved Packages"
+                detailIcon="bookmark"
+                detailHeader="Your Saved List is Empty!"
+                detailLevel="info">
 
-                    <div className="card-body text-center">
-                        <div className="text-info">
-                            <i className="card-alert-icon fa fa-bookmark" aria-hidden="true" />
-                            <h5>Your Saved List is Empty!</h5>
-                        </div>
-
-                        <span className="pkg-detail-text">
-                            To get started, click the bookmark icon to the right of the package status { }
-                            after making a search.
-                        </span>
-                    </div>
-                </div>
-            </div>
+                To get started, click the bookmark icon to the right of the package status { }
+                after making a search.
+            </Card>
         );
     }
 
     renderMainCard()
     {
         return (
-            <div>
-                <div className="card">
-                    <div className="card-header">Saved Packages</div>
-
-                    <div className="card-body">
-                        { [ ...this.renderPackages() ] }
-                    </div>
-                </div>
-            </div>
+            <Card header="Saved Packages">
+                { [ ...this.renderPackages() ] }
+            </Card>
         );
     }
 
@@ -113,7 +101,6 @@ class SavedCard extends Component
     }
 }
 
-// TODO: ensure redux-persist saves only savedCard reducer
 const mapStateToProps = (state) => ({ saved: state.savedCard });
 const mapDispatchToProps = (dispatch) => ({
     doTrackingSearch:

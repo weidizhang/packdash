@@ -8,6 +8,7 @@ import {
     PackageDetailsRenderStates
 } from "../redux/actions";
 
+import Card from "./ui/Card";
 import PackageMap from "./PackageMap";
 
 class PackageCard extends Component
@@ -156,128 +157,114 @@ class PackageCard extends Component
     renderErrorCard()
     {
         return (
-            <div>
-                <div className="card">
-                    <div className="card-header">Package Details</div>
+            <Card
+                header="Package Details"
+                detailIcon="exclamation-triangle"
+                detailHeader="Oops!"
+                detailLevel="danger"
+                useGapSpace>
 
-                    <div className="card-body text-center">
-                        <div className="text-danger">
-                            <i className="card-alert-icon fa fa-exclamation-triangle" aria-hidden="true" />
-                            <h5>Oops!</h5>
-                        </div>
-
-                        <span className="pkg-detail-text">
-                            Please double check your tracking number and try again.
-                        </span>
-                    </div>
-                </div>
-
-                <div className="gap-space"></div>
-            </div>
+                Please double check your tracking number and try again.
+            </Card>
         );
     }
 
     renderLoadingCard()
     {
         return (
-            <div>
-                <div className="card">
-                    <div className="card-header">Package Details</div>
+            <Card
+                header="Package Details"
+                useGapSpace
+                textCenter>
 
-                    <div className="card-body text-center">
-                        <div className="spinner-border text-primary" role="status">
-                            <span className="sr-only">Loading...</span>
-                        </div>
-                    </div>
+                <div className="spinner-border text-primary" role="status">
+                    <span className="sr-only">Loading...</span>
                 </div>
-
-                <div className="gap-space"></div>
-            </div>
+            </Card>
         );
     }
 
     renderMainCard()
     {
         return (
-            <div>
-                <div className="card" ref={ this.mainCard }>
-                    <div className="card-header">Package Details</div>
+            <Card
+                header="Package Details"
+                innerRef={ this.mainCard }
+                useGapSpace>
 
-                    <div className="card-body">
-                        {/* Status and Bookmarking */}
-                        <div>
-                            <h5 className="card-title d-inline-block">{ this.props.details.status }</h5>
+                {/* Status and Bookmarking */}
+                <div>
+                    <h5 className="card-title d-inline-block">{ this.props.details.status }</h5>
 
-                            <a
-                                href="#" id="pkg-save" className="float-right icon-fix"
+                    <a
+                        href="#" id="pkg-save" className="float-right icon-fix"
 
-                                title={ this.isBookmarked() ? "Remove from Saved Packages" : "Add to Saved Packages" }
-                                style={{
-                                    color: this.isBookmarked() ? "gold" : "#6c757d",
-                                    opacity: this.state.isBookmarkHover ? 0.5 : 1.0
-                                }}
-                                onClick={ this.handleBookmarkClick.bind(this) }
-                                onMouseEnter={ () => this.invertUIState("isBookmarkHover") }
-                                onMouseLeave={ () => this.invertUIState("isBookmarkHover") }
-                                >
+                        title={ this.isBookmarked() ? "Remove from Saved Packages" : "Add to Saved Packages" }
+                        style={{
+                            color: this.isBookmarked() ? "gold" : "#6c757d",
+                            opacity: this.state.isBookmarkHover ? 0.5 : 1.0
+                        }}
+                        onClick={ this.handleBookmarkClick.bind(this) }
+                        onMouseEnter={ () => this.invertUIState("isBookmarkHover") }
+                        onMouseLeave={ () => this.invertUIState("isBookmarkHover") }
+                        >
 
-                                <i
-                                    className="fa fa-bookmark"
-                                    aria-hidden="true" />
-                            </a>
-                        </div>
-
-                        {/* Carrier Info */}
-                        <div>
-                            <span id="pkg-detail-track">
-                                Tracking Number: { }
-                                <a
-                                    target="_blank"
-                                    href={ this.createCarrierLink() }
-                                    title={ "View on " +  this.props.details.carrier }>
-
-                                    <span id="pkg-detail-num">
-                                        { this.props.details.tracking }
-                                    </span>
-                                </a>
-                            </span>
-                            <span className="badge badge-pill badge-info float-right">
-                                { this.props.details.carrier }
-                            </span>
-                        </div>
-
-                        <hr />
-
-                        {/* Most recent carrier event or detail */}
-                        <span className="pkg-detail-text">
-                            { this.props.details.lastUpdate }
-                        </span>
-
-                        {/* Expand to show all carrier events or details */}
-                        <button
-                            className="btn btn-sm btn-primary float-right icon-fix" type="button"
-                            data-toggle="collapse" data-target="#pkg-detail-collapse" aria-expanded="false"
-                            aria-controls="pkg-detail-collapse"
-
-                            ref={ this.mainCardCollapse }
-                            onClick={ this.onCollapseClick.bind(this) }
-                            disabled={ !this.hasPreviousDetails() }>
-                            <i
-                                className={ "fa fa-chevron-" + (this.state.isExpanded ? "up" : "down") }
-                                aria-hidden="true" />
-                        </button>
-
-                        <div className="collapse" id="pkg-detail-collapse">
-                            { [ ...this.renderMainCardDetails() ] }
-                        </div>
-
-                        <hr />
-                        <PackageMap markers={ this.props.details.locationMarkers } />
-                    </div>
+                        <i
+                            className="fa fa-bookmark"
+                            aria-hidden="true" />
+                    </a>
                 </div>
 
-                <div className="gap-space"></div>
-            </div>
+                {/* Carrier Info */}
+                <div>
+                    <span id="pkg-detail-track">
+                        Tracking Number: { }
+                        <a
+                            target="_blank"
+                            href={ this.createCarrierLink() }
+                            title={ "View on " +  this.props.details.carrier }>
+
+                            <span id="pkg-detail-num">
+                                { this.props.details.tracking }
+                            </span>
+                        </a>
+                    </span>
+                    <span className="badge badge-pill badge-info float-right">
+                        { this.props.details.carrier }
+                    </span>
+                </div>
+
+                <hr />
+
+                {/* Most recent carrier event or detail */}
+                <span className="pkg-detail-text">
+                    { this.props.details.lastUpdate }
+                </span>
+
+                {/* Expand to show all carrier events or details */}
+                <button
+                    className="btn btn-sm btn-primary float-right icon-fix" type="button"
+                    data-toggle="collapse" data-target="#pkg-detail-collapse" aria-expanded="false"
+                    aria-controls="pkg-detail-collapse"
+
+                    ref={ this.mainCardCollapse }
+                    onClick={ this.onCollapseClick.bind(this) }
+                    disabled={ !this.hasPreviousDetails() }>
+                    <i
+                        className={ "fa fa-chevron-" + (this.state.isExpanded ? "up" : "down") }
+                        aria-hidden="true" />
+                </button>
+
+                {/* Render the package details from the redux state */}
+                <div className="collapse" id="pkg-detail-collapse">
+                    { [ ...this.renderMainCardDetails() ] }
+                </div>
+
+                <hr />
+
+                {/* Map showing the most recent locations the package has been along its route */}
+                <PackageMap markers={ this.props.details.locationMarkers } />
+            </Card>
         );
     }
 
