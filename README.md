@@ -1,68 +1,137 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# packdash
 
-## Available Scripts
+Created by Weidi Zhang
 
-In the project directory, you can run:
+## Feature Overview
 
-### `npm start`
+- Automatically detects the package carrier of a tracking code (supporting FedEx, UPS, and USPS)
+- Expandable package details while first showing a card with the essential information
+- Map visualizing the travel path of a package when viewing package details, automatically focused on most recent locations first
+- Ability to save (or "bookmark") and name certain packages for quick access later
+- Fluid and user-friendly interface taking advantage of redundancy, animations, and prompts
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Screenshots
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+**Home:**
 
-### `npm test`
+![Screenshot from Main Screen](screenshots/main-screen.jpg)
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+**Package Details:**
 
-### `npm run build`
+![Screenshot from Package Details](screenshots/pkg-details.jpg)
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+**Bookmark Prompt:**
+![Screenshot from Package Details Prompt](screenshots/bookmark.jpg)
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+**Errors:**
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+![Screenshot from Package Details with Error](screenshots/error.jpg)
 
-### `npm run eject`
+**Expanded Details:**
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+![Screenshot from Main Screen](screenshots/pkg-details-expanded.jpg)
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+# Architecture / Design
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## Frontend
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+The frontend uses React and Redux together, with React powering the rendered views and Redux managing global application states.
 
-## Learn More
+Redux is also used with middlewares such as redux-persist and redux-thunk to save the bookmarked packages state and dispatch actions involved between API calls.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Essentially, a sample flow could be the following:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+1. User enters a tracking number and starts the search through the search bar component, which dispatches multiple redux actions
+2. These actions change the package details card render state to tell it information is loading while an API call is being made
+3. Once done, the render state and information from the API is now available through more state updates
+4. User can see package status and map visualization
+5. User clicks to bookmark a package
+6. Prompt appears asking for an optional name
+7. Redux action for adding a bookmark is triggered
+8. Package now appears in the saved packages card, where the item can be clicked to quickly trigger a search for the saved package
 
-### Code Splitting
+## Backend
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+Python 3.7 is used for the backend, using the Flask framework with Flask-RESTful as the main library helping power the backend API. It follows general RESTful good practices.
 
-### Analyzing the Bundle Size
+The backend API supports FedEx, UPS, and USPS. It first fetches details from the respective carrier APIs, parses and pre-processes this data for a consistent output format, then attaches geolocation data to specific package events that are used to create map markers on the frontend.
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
+For example, a request to ```/carrier/ups/1Zxxxxxxxxxxxxxxx``` would output data that resembles the following:
 
-### Making a Progressive Web App
+```
+{
+    "lastUpdate": "06/01/2020 12:42 P.M., SOUTH LYON, MI, US: Delivered",
+    "locationMarkers": [
+        {
+            "eventText": "Departed from Facility - Aliso Viejo, CA, United States",
+            "position": [
+                33.576138,
+                -117.725812
+            ]
+        },
+        {
+            "eventText": "Departed from Facility - Hodgkins, IL, United States",
+            "position": [
+                41.768921,
+                -87.857835
+            ]
+        },
+        {
+            "eventText": "Departed from Facility - Maumee, OH, United States",
+            "position": [
+                41.562829,
+                -83.653824
+            ]
+        },
+        {
+            "eventText": "Out For Delivery Today - Howell, MI, United States",
+            "position": [
+                42.607255,
+                -83.929395
+            ]
+        },
+        {
+            "eventText": "Delivered - SOUTH LYON, MI, US",
+            "position": [
+                42.451377,
+                -83.659179
+            ]
+        }
+    ],
+    "previousDetails": [
+        "06/01/2020 8:30 A.M., Howell, MI, United States: Out For Delivery Today",
+        "05/30/2020 9:08 A.M., Howell, MI, United States: Destination Scan",
+        "05/30/2020 1:49 A.M., Howell, MI, United States: Arrived at Facility",
+        "05/30/2020 12:26 A.M., Maumee, OH, United States: Departed from Facility",
+        "05/29/2020 5:31 P.M., Maumee, OH, United States: Arrived at Facility",
+        "05/29/2020 1:08 P.M., Hodgkins, IL, United States: Departed from Facility",
+        "05/29/2020 12:08 P.M., Hodgkins, IL, United States: Arrived at Facility",
+        "05/26/2020 11:43 P.M., Aliso Viejo, CA, United States: Departed from Facility",
+        "05/26/2020 8:20 P.M., Aliso Viejo, CA, United States: Origin Scan",
+        "05/24/2020 4:29 A.M., United States: Order Processed: Ready for UPS"
+    ],
+    "status": "Delivered"
+}
+```
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
+In general, the API supports endpoints in the format ```GET /carrier/{carrier}/{tracking}``` where ```{carrier}``` is ```(fedex|ups|usps)``` and ```{tracking}``` is the tracking number.
 
-### Advanced Configuration
+## Installation and Configuration
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
+1. Ensure latest version of [Node.js](https://nodejs.org/en/) is installed
+2. Ensure Python 3.7.x is installed
+3. Run ```npm install``` in the root ```/``` directory of the project to install required node packages
+4. Run ```pip install -r requirements.txt``` in the ```/backend/``` directory of the project to install required packages
+5. Rename ```config_example.py``` to ```config.py``` after making the required changes in both ```/backend/carriers/``` and ```/backend/mapquest/``` directories
 
-### Deployment
+## Running packdash
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
+1. In the ```/backend/``` directory, run ```python api_main.py``` to start the backend API server
+2. In the root ```/``` directory, run ```npm start```
+3. A new browser tab for ```http://localhost:3000/``` should open with the packdash app.
 
-### `npm run build` fails to minify
+## License
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+See LICENSE.md.
+
+Shared under [Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)](https://creativecommons.org/licenses/by-nc-nd/4.0/).
